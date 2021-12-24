@@ -5,7 +5,12 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Home.vue') },
+      { path: '',
+        component: () => import('pages/Home.vue'),
+        props: (route: { query: { page: string; }; }) => ({
+          page: route.query.page
+        })
+      },
       { path: 'charactor', component:() => import('pages/Charactor.vue') }
     ],
   },

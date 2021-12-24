@@ -1,6 +1,8 @@
 {
   "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": "."
+    "lib": ["ESNext", "DOM"],
+    "baseUrl": ".",
+    "types": ["src/@types/window.d.ts"]
   }
 }

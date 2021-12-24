@@ -137,7 +137,11 @@ module.exports = configure(function (ctx) {
     // https://quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
-      workboxOptions: {}, // only for GenerateSW
+      workboxOptions: {
+        exclude: [
+          'CNAME',
+        ],
+      }, // only for GenerateSW
 
       // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
       // if using workbox in InjectManifest mode
@@ -151,8 +155,11 @@ module.exports = configure(function (ctx) {
         description: 'A Quasar Framework app',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#027be3',
+        start_url: './index.html',
+        themeColor: "#2d3748",
+        msTileColor: "#2d3748",
+        appleMobileWebAppCapable: "no",
+        appleMobileWebAppStatusBarStyle: "default",
         icons: [
           {
             src: 'icons/icon-128x128.png',
@@ -178,6 +185,38 @@ module.exports = configure(function (ctx) {
             src: 'icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png'
+          }
+        ],
+        shortcuts: [
+          {
+            'name': '最新話',
+            'short_name': 'Open latest',
+            'description': '最新話のページを開きます',
+            'url': '/#/?page=latest'
+          },
+          {
+            'name': 'キャラクター',
+            'short_name': 'キャラクター',
+            'description': 'キャラクターページを開きます',
+            'url': '/#/charactor'
+          },
+          {
+            'name': '検索くん',
+            'short_name': '検索くん',
+            'description': 'びゅあー検索くんのページを開きます',
+            'url': '/#/search'
+          },
+          {
+            'name': 'DLsite',
+            'short_name': 'Open DLsite',
+            'description': '道草屋の作品一覧ページ(DLsite)を開きます',
+            'url': '/#/dlsite'
+          },
+          {
+            'name': '作品一覧',
+            'short_name': '作品一覧',
+            'description': '道草屋の作品一覧ページを開きます',
+            'url': '/#/products'
           }
         ]
       }

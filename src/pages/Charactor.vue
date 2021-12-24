@@ -3,7 +3,7 @@
     <!-- content -->
     <q-card>
       <q-card-section>
-        Charactor.
+        Charactor page. /Charactor
       </q-card-section>
     </q-card>
   </q-page>
