@@ -9,6 +9,9 @@
         <q-btn round fab-mini v-for="(_, i) in chara" :key="i" :to="'/charactor/' + chara[i].name">
           <q-avatar><img style="width:100%;" :src="chara[i].icon" /></q-avatar>
         </q-btn>
+        <q-btn round fab-mini to="/charactor/all">
+          <q-avatar>All</q-avatar>
+        </q-btn>
       </q-card-section>
       <q-card-section>
         <div v-for="(_, i) in chara" :key="i">
