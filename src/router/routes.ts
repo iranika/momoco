@@ -21,6 +21,10 @@ const routes: RouteRecordRaw[] = [
         props: (route: { params: { name: string; }; })=>({
           name: route.params.name
         })
+      },
+      {
+        path: '/timeline',
+        component:() => import('pages/Timeline.vue')
       }
     ],
   },
