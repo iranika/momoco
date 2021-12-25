@@ -76,7 +76,6 @@
 import { defineComponent, ref, } from 'vue';
 import UpdateNofity from 'components/UpdateNotify.vue';
 import Footer from 'components/Footer.vue';
-import LeftMenuList from 'components/LeftMenuList.vue';
 const linksList = [
   {
     title: 'home',
