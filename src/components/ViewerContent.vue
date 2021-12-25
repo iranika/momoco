@@ -140,7 +140,7 @@ export default defineComponent({
       if (bottomVisible()){
         addContent()
       }
-    }, 300)
+    }, 200)
 
     function initShow(page: string){
       const pageInt = parseInt(page)
