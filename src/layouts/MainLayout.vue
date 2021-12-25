@@ -3,22 +3,21 @@
 
     <q-header reveal elevated class="bg-primary text-white" height-hint="98">
       <div class="bg-header">
-      <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-        <q-space />
-        <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer"/>
-      </q-toolbar>
-      <q-toolbar inset>
-        <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
-      </q-toolbar>
-      <q-toolbar inset>
-        <q-tabs>
-          <q-route-tab to="/" label="Home" exact />
-          <q-route-tab to="/?page=latest" label="Latest" exact/>
-          <q-route-tab to="/charactor" label="Charactor" exact/>
-        </q-tabs>
-      </q-toolbar>
-
+        <q-toolbar>
+          <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+          <q-space />
+          <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer"/>
+        </q-toolbar>
+        <q-toolbar inset>
+          <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
+        </q-toolbar>
+        <q-toolbar inset>
+          <q-tabs>
+            <q-route-tab to="/" label="Home" exact />
+            <q-route-tab to="/?page=latest" label="Latest" exact/>
+            <q-route-tab to="/charactor" label="Charactor" exact/>
+          </q-tabs>
+        </q-toolbar>
       </div>
     </q-header>
 
@@ -31,7 +30,6 @@
               <q-item-section avatar>
                 <q-icon :name="list.icon" />
               </q-item-section>
-
               <q-item-section>
                 {{ list.disable ? $t(list.title) + " : WIP" : $t(list.title) }}
               </q-item-section>
@@ -51,14 +49,28 @@
 
     </q-drawer>
 
-    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered>
+    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered width="240">
+      <q-scroll-area class="fit">
+        <q-list>
+          <q-item clickable style="margin-top: 10px;" to="/search">
+            <q-item-section>詳細検索をひらく</q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-input dense label="検索" v-model="searchText"></q-input>
+            </q-item-section>
+          </q-item>
+          <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(i)" v-show="isFiltered(pageData[i].Title, i)">
+            <q-item-section>{{ i + 1}}.{{ pageData[i].Title }}</q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
       <!-- drawer content -->
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
-    <UpdateNofity />
     <Footer />
   </q-layout>
 </template>
@@ -74,7 +86,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, } from 'vue';
-import UpdateNofity from 'components/UpdateNotify.vue';
 import Footer from 'components/Footer.vue';
 const linksList = [
   {
@@ -138,16 +149,27 @@ const linksList = [
 
 export default defineComponent({
   components:{
-    UpdateNofity,
     Footer,
     //LeftMenuList
   },
   setup () {
     const leftDrawerOpen = ref(false)
     const rightDrawerOpen = ref(false)
+    const searchText = ref('')
+    const pageData = window.pageData
 //    const tabs = ref('home')
 
+    function getPageUrl(index: number){
+      return `/?page=${index.toString()}`;
+    }
+
+    function isFiltered(title:string, index:number){
+      const num = index + 1;
+      return `${num}.${title}`.toString().includes(searchText.value)
+    }
+
     return {
+      getPageUrl,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
@@ -156,7 +178,10 @@ export default defineComponent({
       toggleRightDrawer () {
         rightDrawerOpen.value = !rightDrawerOpen.value
       },
-      linksList
+      linksList,
+      pageData,
+      searchText,
+      isFiltered
   //    tabs
     }
   }
