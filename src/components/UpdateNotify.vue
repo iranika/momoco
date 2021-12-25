@@ -20,18 +20,18 @@ export default {
   name: 'UpdateNofity',
   setup(){
     let refreshing = ref(false)
-    var registration = ref(null)
+    //var registration = ref(null)
     let updateExists = ref(false)
 
-    function updateAvailable(event){
-      registration = event.detail;
+    function updateAvailable(){
+      //registration = event.detail;
       updateExists = true;
     }
 
     function refreshApp(){
       updateExists = false;
-      if (!registration.value || !registration.value.waiting) return;
-      registration.value.waiting.postMessage({ type: 'SKIP_WAITING' })
+      //if (!registration.value || !registration.value.waiting) return;
+      ServiceWorkerRegistration.waiting.postMessage({ type: 'SKIP_WAITING' })
     }
 
     document.addEventListener('swUpdated', updateAvailable, {
