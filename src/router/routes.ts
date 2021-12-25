@@ -11,7 +11,17 @@ const routes: RouteRecordRaw[] = [
           page: route.query.page
         })
       },
-      { path: 'charactor', component:() => import('pages/Charactor.vue') }
+      {
+        path: '/charactor',
+        redirect: '/charactor/seri'
+      },
+      {
+        path: '/charactor/:name',
+        component:() => import('pages/Charactor.vue'),
+        props: (route: { params: { name: string; }; })=>({
+          name: route.params.name
+        })
+      }
     ],
   },
 
