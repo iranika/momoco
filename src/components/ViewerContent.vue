@@ -18,7 +18,7 @@
         <TwitterShareButton :link="CreateShareLinkTwitter(i + 1, pages[i].Title)" />
         <!-- NOTE:ブックマーク機能の実装 -->
         <q-btn
-          color="green"
+          :color="bookmarkStore.isIncludeBookmark(i+1) ? 'grey' : 'green'"
           class="text-white"
           rounded size="xs"
           @click="bookmarkStore.clickBookmark(i + 1)"
