@@ -17,7 +17,13 @@
       <div style="display: flex; justify-content: center;">
         <TwitterShareButton :link="CreateShareLinkTwitter(i + 1, pages[i].Title)" />
         <!-- NOTE:ブックマーク機能の実装 -->
-        <q-btn color="green" class="text-white" rounded size="xs"><q-icon name="book" />しおり</q-btn>
+        <q-btn
+          color="green"
+          class="text-white"
+          rounded size="xs"
+          @click="bookmarkStore.clickBookmark(i + 1)"
+        ><q-icon name="book" />しおり</q-btn>
+        <!-- NOTE: MEMOボタンの実装 -->
         <q-btn color="orange" class="text-white" rounded size="xs"
           v-if="db.memos[i] && db.memos[i] != null"
           v-on:click="memo = db.memos[i]; memodal = !memodal"
@@ -72,6 +78,7 @@ import { debounce } from 'quasar';
 import { defineComponent, ref, watch } from 'vue';
 import TwitterShareButton from 'components/TwitterShareButton.vue';
 import useMemoStore from 'src/stores/MemoStore';
+import { useBookmarkStore } from 'src/stores/LocalStorage';
 
 interface Page {
     Title: string;
@@ -105,8 +112,9 @@ export default defineComponent({
 
     const memodal = ref(false);
     const memo = ref('');
+    const db = useMemoStore().db;
 
-    const db = useMemoStore().db
+    const bookmarkStore = useBookmarkStore();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pages = window.pageData;
@@ -178,7 +186,8 @@ export default defineComponent({
       addContent,
       beforeContent,
       scrolled,
-      CreateShareLinkTwitter
+      CreateShareLinkTwitter,
+      bookmarkStore
     }
   },
   methods:{

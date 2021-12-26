@@ -6,6 +6,18 @@
         <q-toolbar>
           <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
           <q-space />
+          <!-- Bookmark menu -->
+          <q-btn dense flat round icon="book">
+            <q-menu>
+              <q-list padding>
+                <q-item-label header>しおり</q-item-label>
+                <q-item class="text-black" v-for="val in bookmarkStore.bookmarks.value.sort((a,b)=> Number(a) - Number(b) )" :key="val" :to="getPageUrl(Number(val))">
+                  <q-item-section>第{{ val }}話</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <!-- LeftDrawer Button -->
           <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer"/>
         </q-toolbar>
         <q-toolbar inset>
@@ -21,10 +33,11 @@
       </div>
     </q-header>
 
+    <!-- Left Drawer -->
     <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item-label header>みちくさびゅあー</q-item-label>
+          <q-item-label header caption>みちくさびゅあー</q-item-label>
           <template v-for="list in linksList" :key="list">
             <q-item clickable v-ripple :to="list.link" :disable="list.disable">
               <q-item-section avatar>
@@ -35,11 +48,33 @@
               </q-item-section>
             </q-item>  
           </template>
+          <q-item-label header caption>外部リンク</q-item-label>
+          <template v-for="list in extLinkList" :key="list">
+            <q-item clickable @click="openURL(list.link)" :disable="list.disable">
+              <q-item-section avatar>
+                <q-icon :name="list.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ list.disable ? $t(list.title) + " : WIP" : list.title }}
+              </q-item-section>
+            </q-item>
+          </template>
+          <q-item-label header caption>いらにかのなにか</q-item-label>
+          <template v-for="list in nikaLinkList" :key="list">
+            <q-item clickable @click="openURL(list.link)" :disable="list.disable">
+              <q-item-section avatar>
+                <q-icon :name="list.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ list.disable ? $t(list.title) + " : WIP" : list.title }}
+              </q-item-section>
+            </q-item>
+          </template>
+          <q-separator></q-separator>
           <q-item clickable v-ripple @click="toggleLeftDrawer">
             <q-item-section avatar>
               <q-icon name="chevron_left" />
             </q-item-section>
-
             <q-item-section>
               {{ $t("collapse") }}
             </q-item-section>
@@ -79,7 +114,6 @@
 .bg-header{
   background: linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat;
   /*background: linear-gradient(to top right, rgba(12, 121, 189, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat; */
-
 }
 </style>
 
@@ -87,6 +121,9 @@
 <script lang="ts">
 import { defineComponent, ref, } from 'vue';
 import Footer from 'components/Footer.vue';
+import { useBookmarkStore } from 'src/stores/LocalStorage';
+import { openURL } from 'quasar';
+
 const linksList = [
   {
     title: 'home',
@@ -111,21 +148,21 @@ const linksList = [
   },
   {
     title: 'search-kun' ,
-    caption: 'github.com/quasarframework',
+    caption: '',
     icon: 'info',
     link: '/search',
-    disable: false
+    disable: true
   },
   {
     title: 'products' ,
-    caption: 'github.com/quasarframework',
+    caption: '',
     icon: 'book',
     link: '/products',
-    disable: false
+    disable: true
   },
   {
     title: 'timeline',
-    caption: 'chat.quasar.dev',
+    caption: '',
     icon: 'info',
     link: '/timeline',
     disable: false
@@ -135,7 +172,7 @@ const linksList = [
     caption: '',
     icon: 'help',
     link: '/about',
-    disable: false
+    disable: true
   },
   {
     title: 'mypage',
@@ -147,6 +184,61 @@ const linksList = [
   
 ];
 
+const extLinkList = [
+  {
+    title: 'DLsiteのページ',
+    icon: 'home',
+    link: 'https://www.dlsite.com/home/dlaf/=/aid/movue/url/https%3A%2F%2Fwww.dlsite.com%2Fmaniax%2Fcircle%2Fprofile%2F%3D%2Fmaker_id%2FRG24350.html%2F%3Futm_medium%3Daffiliate%26utm_campaign%3Dbnlink%26utm_content%3Dtext',
+    disable: false
+  },
+  {
+    title: 'BOOTHのページ',
+    icon: 'home',
+    link: 'https://www.dlsite.com/home/dlaf/=/aid/movue/url/https%3A%2F%2Fwww.dlsite.com%2Fmaniax%2Fcircle%2Fprofile%2F%3D%2Fmaker_id%2FRG24350.html%2F%3Futm_medium%3Daffiliate%26utm_campaign%3Dbnlink%26utm_content%3Dtext',
+    disable: false
+  },
+  {
+    title: 'お土産売り場(BOOTH)',
+    icon: 'home',
+    link: 'https://momotori.booth.pm/item_lists/rBkTe4Bm',
+    disable: false
+  },
+  {
+    title: '桃色CODE',
+    icon: 'home',
+    link: 'http://momoirocode.web.fc2.com/',
+    disable: false
+  },
+  {
+    title: '雑記的な(ブログ)',
+    icon: 'home',
+    link: 'http://blog.livedoor.jp/kai_tyou/',
+    disable: false
+  },
+  {
+    title: '予約電話',
+    icon: 'home',
+    link: 'http://blog.livedoor.jp/kai_tyou/',
+    disable: true
+  },
+];
+
+const nikaLinkList = [
+  {
+    title: '道草恋歌',
+    icon: 'apps',
+    link: 'https://michikusa-renka.glideapp.io/',
+    disable: false
+  },
+  {
+    title: 'Nikaスタンプβ',
+    icon: 'apps',
+    link: 'https://stamp.iranika.info/#/',
+    disable: false
+  },
+
+]
+
 export default defineComponent({
   components:{
     Footer,
@@ -157,7 +249,7 @@ export default defineComponent({
     const rightDrawerOpen = ref(false)
     const searchText = ref('')
     const pageData = window.pageData
-//    const tabs = ref('home')
+    const bookmarkStore = useBookmarkStore()
 
     function getPageUrl(index: number){
       return `/?page=${index.toString()}`;
@@ -169,6 +261,9 @@ export default defineComponent({
     }
 
     return {
+      extLinkList,
+      linksList,
+      nikaLinkList,
       getPageUrl,
       leftDrawerOpen,
       toggleLeftDrawer () {
@@ -178,11 +273,11 @@ export default defineComponent({
       toggleRightDrawer () {
         rightDrawerOpen.value = !rightDrawerOpen.value
       },
-      linksList,
       pageData,
       searchText,
-      isFiltered
-  //    tabs
+      isFiltered,
+      bookmarkStore,
+      openURL
     }
   }
 })
