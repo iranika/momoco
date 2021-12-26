@@ -16,6 +16,16 @@
             <q-btn type="a" flat :href="db.products[i].dalf">DLsiteの作品ページ</q-btn>
           </q-timeline-entry>
         </template>
+        <q-timeline-entry>
+          <template v-slot:title>
+            <div class="text-subtitle1 text-bold">
+              Now waiting -> next...
+            </div>
+          </template>
+          <template v-slot:subtitle>
+            {{ date.formatDate(Date(), "YYYY/MM/DD") }}
+          </template>
+        </q-timeline-entry>
       </q-timeline>
     </div>
   </q-page>
@@ -24,7 +34,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import useProductStore from 'src/stores/ProductStore'
-import { useQuasar } from 'quasar';
+import { useQuasar, date } from 'quasar';
 
 export default defineComponent({
   // name: 'PageName'
@@ -38,7 +48,8 @@ export default defineComponent({
 
     return {
       db,
-      layout
+      layout,
+      date
     }
   }
 })
