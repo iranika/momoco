@@ -151,7 +151,7 @@ const linksList = [
     caption: '',
     icon: 'info',
     link: '/search',
-    disable: true
+    disable: false
   },
   {
     title: 'products' ,
