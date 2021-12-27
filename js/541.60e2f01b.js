@@ -1,1 +1,0 @@
-"use strict";(self["webpackChunkmomoco"]=self["webpackChunkmomoco"]||[]).push([[541],{1541:(n,e,o)=>{o.r(e),o.d(e,{default:()=>m});var c=o(3673);function a(n,e,o,a,s,t){const r=(0,c.up)("q-page");return(0,c.wg)(),(0,c.j4)(r,{padding:""})}const s=(0,c.aZ)({});var t=o(4260),r=o(4379),u=o(7518),p=o.n(u);const d=(0,t.Z)(s,[["render",a]]),m=d;p()(s,"components",{QPage:r.Z})}}]);
