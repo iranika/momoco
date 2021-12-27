@@ -7,7 +7,7 @@ export default {
   home: 'ホーム',
   latest: '最新話',
   charactor: '登場人物',
-  'search-kun': 'びゅあー検索くん㌁',
+  'search-kun': 'びゅあー検索くん㌼',
   products: '作品一覧',
   timeline: 'タイムライン',
   about: 'このアプリについて',
