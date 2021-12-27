@@ -1,59 +1,79 @@
 <template>
   <q-page padding>
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">びゅあー検索くん㌼</div>
-      </q-card-section>
-      <q-card-section>
-        <q-table
-          ref="tableRef"
-          :class="tableClass"
-          tabindex="0"
-          title="Treats"
-          :rows="rows"
-          :columns="columns"
-          row-key="name"
-          selection="single"
-          v-model:selected="selected"
-          v-model:pagination="pagination"
-          :filter="filter"
-        >
-          <template v-slot:top-right>
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
+    <q-table
+      title="びゅあー検索㌼"
+      :dense="$q.screen.lt.md"
+      :grid="$q.screen.xs"
+      :rows="searchStore.products.value"
+      :columns="columns"
+      row-key="No"
+      :filter="filter"
+      :selected-rows-label="getSelectedString"
+      selection="multiple"
+      v-model:selected="selected"
+      :pagination="pagenation"
+    >
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search" />
           </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
+        </q-input>
+      </template>
+    </q-table>
+
   </q-page>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
+import { useSearchStore } from 'src/stores/SearchStore';
 
 const columns = [
   {
-    name: 'title',
+    name: 'No',
     required: true,
+    label: 'No',
+    align: 'left',
+    field: 'No',
+    sortable: true,
+  },
+  { name: 'Title',
     label: 'タイトル',
     align: 'left',
-    field: name,
-    sortable: true
+    field: 'Title',
+    sortable: true,
+    style: 'width: 5px;'
   },
-  { name: 'charactor', align: 'center', label: '登場キャラ', field: 'charactor', sortable: true },
-  { name: 'keyword', label: 'キーワード', field: 'keyword', sortable: true },
-  { name: 'comment', label: 'コメント', field: 'comment' },
-  { name: 'link', label: 'リンク', field: 'link' }
+  { name: 'Charactors',
+    label: 'キャラクター',
+    align: 'left',
+    field: 'Charactors',
+    sortable: true,
+    format: (val:Array<string>) => val.join(',')
+  },
+  { name: 'Keyword', label: 'キーワード', align: 'left', field: 'Keyword', format: (val:Array<string>) => val.join(',')},
+  //{ name: 'Comment', label: 'コメント', align: 'left', field: 'Comment' },
+  { name: 'Link', label: 'リンク', align: 'left', field: 'Links' }
 ]
 
 const rows = [
-  { id: 1, name: 'hoge', calories: 159, fat: 6.0, carbs: 24, protein: 4.0, sodium: 87, calcium: '14%', iron: '1%' },
-  { id: 2, name: 'hoge2', calories: 237, fat: 9.0, carbs: 37, protein: 4.3, sodium: 129, calcium: '8%', iron: '1%' },
-  { id: 3, name: 'hoge3', calories: 262, fat: 16.0, carbs: 23, protein: 6.0, sodium: 337, calcium: '6%', iron: '7%' },
-  { id: 4, name: 'hoge4', calories: 305, fat: 3.7, carbs: 67, protein: 4.3, sodium: 413, calcium: '3%', iron: '8%' },
+  {
+    No: 1,
+    Title: '都会派',
+    Charactors: ['せり','すずな'],
+    Keyword: ['きっぷ','お婆ちゃん'],
+    Comment: 'きっぷが買えるなんてずなちゃんは都会派だね！',
+    Link: ''
+  },
+  {
+    No: 2,
+    Title: '隣町より遠く/手渡し',
+    Charactors: ['せり','すずな','しろ'],
+    Keyword: ['きっぷ','電車'],
+    Comment: 'ずなちゃんかわいいね',
+    Link: ''
+  },
 ]
 
 export default defineComponent({
@@ -61,11 +81,12 @@ export default defineComponent({
   setup(){
     const navigationActive = ref(false)
     const pagination = ref({})
-    const selected = ref({})
-
+    const selected = ref([])
+    const searchStore = useSearchStore()
     return {
       columns,
       rows,
+      searchStore,
       navigationActive,
       selected,
       pagination,
@@ -73,6 +94,9 @@ export default defineComponent({
       filter: ref(''),
       pagenation: ref({}),
       tableClass: computed(()=> navigationActive.value === true ? 'shadow-8 no-outline' : null),
+      getSelectedString(){
+        return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rows.length}`
+      }
     }
   }
 })
