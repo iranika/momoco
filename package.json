@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
+    "start": "quasar dev",
     "deploy": "gh-pages -d dist/pwa",
     "bd": "quasar build -m pwa && yarn deploy"
   },
