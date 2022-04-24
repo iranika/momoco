@@ -11,6 +11,7 @@ const routes: RouteRecordRaw[] = [
           page: route.query.page
         })
       },
+      
       {
         path: '/charactor',
         redirect: '/charactor/seri'
@@ -29,6 +30,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/search',
         component:() => import('pages/Search.vue')
+      },
+      {
+        path: '/about',
+        component:() => import('pages/About.vue')
       }
     ],
   },

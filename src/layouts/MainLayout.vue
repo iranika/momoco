@@ -172,7 +172,7 @@ const linksList = [
     caption: '',
     icon: 'help',
     link: '/about',
-    disable: true
+    disable: false
   },
   {
     title: 'mypage',
