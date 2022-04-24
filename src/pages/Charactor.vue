@@ -2,14 +2,14 @@
   <q-page padding>
     <q-card class="chara-card q-mx-auto">
       <q-card-section>
-        <div class="text-h4" style="margin: 10px auto 10px auto;">登場人物の紹介</div>
+        <div class="text-h5" style="margin: 10px auto 10px auto;">登場人物の紹介</div>
         ※いらにかの主観で書かれています。
       </q-card-section>
       <q-card-section>
-        <q-btn round fab-mini v-for="(_, i) in chara" :key="i" :to="'/charactor/' + chara[i].name">
+        <q-btn round fab-mini padding="xs" v-for="(_, i) in chara" :key="i" :to="'/charactor/' + chara[i].name">
           <q-avatar><img style="width:100%;" :src="chara[i].icon" /></q-avatar>
         </q-btn>
-        <q-btn round fab-mini to="/charactor/all">
+        <q-btn round fab-mini padding="xs" to="/charactor/all">
           <q-avatar>All</q-avatar>
         </q-btn>
       </q-card-section>
@@ -17,10 +17,10 @@
         <div v-for="(_, i) in chara" :key="i">
           <q-card flat v-if="name == chara[i].name || name == 'all'">
             <q-card-section>
-              <div class="text-h5" style="margin: 10px auto 10px auto;">{{ chara[i].namae }}</div>
+              <div class="text-h6" style="margin: 10px auto 10px auto;">{{ chara[i].namae }}</div>
               CV:<label v-html="chara[i].cv"></label>
             </q-card-section>
-            <q-card-section v-text="chara[i].text" style="white-space:pre-wrap;">
+            <q-card-section class="text-subtitle2" v-text="chara[i].text" style="white-space:pre-wrap;">
             </q-card-section>
             <q-card-section>
               <q-expansion-item
