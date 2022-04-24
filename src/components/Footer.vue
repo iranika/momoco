@@ -14,6 +14,7 @@
           >でプレゼントを送ってあげてください。<br />
           コーヒーとか喜びます。
         </p>
+        <div class="">みちくさびゅーあー ©2019 iranika(@happy_packet)</div>
       </q-card-section>
     </q-card>
   </q-footer>
