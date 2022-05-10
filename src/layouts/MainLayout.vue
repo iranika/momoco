@@ -95,8 +95,8 @@
               <q-input dense label="検索" v-model="searchText"></q-input>
             </q-item-section>
           </q-item>
-          <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(i)" v-show="isFiltered(pageData[i].Title, i)">
-            <q-item-section>{{ i + 1}}.{{ pageData[i].Title }}</q-item-section>
+          <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(getRightIndex(i))" v-show="isFiltered(pageData[i].Title, i)">
+            <q-item-section>{{ getRightIndex(i) }}.{{ pageData[i].Title }}</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -251,8 +251,23 @@ export default defineComponent({
     const pageData = window.pageData
     const bookmarkStore = useBookmarkStore()
 
-    function getPageUrl(index: number){
-      return `/?page=${index.toString()}`;
+    function getRightIndex(index: number){
+      const ZureMin = 2;
+      const ZureMax = 79;
+      if (ZureMin <= index && index < ZureMax){
+        return index + 2
+      }else if(index == 79){
+        return 'ri'
+      }else{
+        return index + 1
+      }
+    }
+    function getPageUrl(index: number | string){
+      if (index == 'ri'){
+        return '/?page=rireki1' 
+      }else{
+        return `/?page=${(index).toString()}`;
+      }
     }
 
     function isFiltered(title:string, index:number){
@@ -265,6 +280,7 @@ export default defineComponent({
       linksList,
       nikaLinkList,
       getPageUrl,
+      getRightIndex,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value

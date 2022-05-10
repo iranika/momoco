@@ -152,8 +152,15 @@ export default defineComponent({
 
     function initShow(page: string){
       const pageInt = parseInt(page)
+      const ZureMin = 3
+      const ZureMax = 80
       if (page === 'latest'){
         return [pages.length -1]
+      }else if(ZureMin <= pageInt && pageInt <= ZureMax){
+        //NOTE: 3話が2話と同じページにあるためずれているが、話数にカウントされていないりれきしょのページでそのズレが解消されている奇跡的なバグがある。
+        return [Number(page) -2]
+      }else if (page === 'rireki1'){
+        return [79]
       }else if (0 < pageInt && pageInt <= pages.length){
         return [Number(page) -1]
       }else if (pageInt <= 0){
