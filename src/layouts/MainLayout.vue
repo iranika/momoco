@@ -34,7 +34,7 @@
     </q-header>
 
     <!-- Left Drawer -->
-    <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
+    <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered behavior="mobile">
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item-label header caption>みちくさびゅあー</q-item-label>
