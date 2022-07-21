@@ -66,7 +66,7 @@ p{
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useQuasar, date } from 'quasar';
+import { date } from 'quasar';
 
 export default defineComponent({
   // name: 'PageName'

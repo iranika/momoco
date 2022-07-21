@@ -12,7 +12,8 @@
         v-for="(_,j) in pages[i].ImagesUrl"
         :key="j"
         :src="pages[i].ImagesUrl[j].replace('/ja/','/ja/webp/').replace('.jpg','.webp')"
-        style="width:100%;"
+        class="img4koma"
+        scrollable
       />
       <div style="display: flex; justify-content: center;">
         <TwitterShareButton :link="CreateShareLinkTwitter(i + 1, pages[i].Title)" />
@@ -67,8 +68,8 @@
   margin: 0 auto 0 auto;
 }
 
-.btn {
-
+.img4koma {
+  width: 100%;
 }
 
 </style>
@@ -159,7 +160,7 @@ export default defineComponent({
       }else if(ZureMin <= pageInt && pageInt <= ZureMax){
         //NOTE: 3話が2話と同じページにあるためずれているが、話数にカウントされていないりれきしょのページでそのズレが解消されている奇跡的なバグがある。
         return [Number(page) -2]
-      }else if (page === 'rireki1'){
+      }else if (page === 'ri'){
         return [79]
       }else if (0 < pageInt && pageInt <= pages.length){
         return [Number(page) -1]

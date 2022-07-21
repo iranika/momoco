@@ -1,10 +1,47 @@
 /*
-productsはGoogleスプレッドシート上の道草屋作品DBを取得するためのものです。
-https://docs.google.com/spreadsheets/d/1naQXZKxTK0NyHuJK0juqCurruwj3tMqgO5dGUM2LO0w/edit?usp=sharing
 */
 
 import {reactive} from 'vue';
 
+export class HeaderImgStore{
+  public static instance: HeaderImgStore;
+
+  public imgList = reactive({
+    value: this.getImageList()
+  })
+
+  public current = reactive({
+    value: "https://mo4koma.iranika.info/top/achives/"
+  })
+
+  public getImageList(){
+    //TODO:画像リストを取得する
+    return [
+      "https://mo4koma.iranika.info/top/archives/seri7y.jpg"
+    ]
+  }
+
+  public static getInstance(): HeaderImgStore {
+    if (!this.instance) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.instance = new HeaderImgStore(HeaderImgStore.getInstance);
+    }
+    return this.instance;
+  }
+  constructor(caller: () => HeaderImgStore) {
+    if (caller == HeaderImgStore.getInstance) {
+      console.info('create instance of HeaderImgStore');
+    } else if (HeaderImgStore.instance) {
+      throw new Error(
+        'Already created instance of HeaderImgStore. You should use HeaderImgStore.getInstance().'
+      );
+    } else {
+      throw new Error(
+        'Constractor args valided illegal. You should use HeaderImgStore.getInstance()'
+      );
+    }
+  }
+}
 
 export class BookmarkStore {
   public static instance: BookmarkStore;
@@ -52,11 +89,11 @@ export class BookmarkStore {
       console.info('create instance of BookmarkStore');
     } else if (BookmarkStore.instance) {
       throw new Error(
-        'Already created instance of AuthStore. You should use AuthStore.getInstance().'
+        'Already created instance of BookmarkStore. You should use BookmarkStore.getInstance().'
       );
     } else {
       throw new Error(
-        'Constractor args valided illegal. You should use AuthStore.getInstance()'
+        'Constractor args valided illegal. You should use BookmarkStore.getInstance()'
       );
     }
   }

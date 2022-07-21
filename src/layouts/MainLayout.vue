@@ -39,7 +39,7 @@
         <q-list padding>
           <q-item-label header caption>みちくさびゅあー</q-item-label>
           <template v-for="list in linksList" :key="list">
-            <q-item clickable v-ripple :to="list.link" :disable="list.disable">
+            <q-item clickable v-ripple :to="list.link" :disable="list.disable" exact>
               <q-item-section avatar>
                 <q-icon :name="list.icon" />
               </q-item-section>
@@ -48,8 +48,8 @@
               </q-item-section>
             </q-item>  
           </template>
-          <q-item-label header caption>外部リンク</q-item-label>
-          <template v-for="list in extLinkList" :key="list">
+          <q-item-label header caption>みちくさやのあぷり</q-item-label>
+          <template v-for="list in nikaLinkList" :key="list">
             <q-item clickable @click="openURL(list.link)" :disable="list.disable">
               <q-item-section avatar>
                 <q-icon :name="list.icon" />
@@ -59,8 +59,8 @@
               </q-item-section>
             </q-item>
           </template>
-          <q-item-label header caption>いらにかのなにか</q-item-label>
-          <template v-for="list in nikaLinkList" :key="list">
+          <q-item-label header caption>外部リンク</q-item-label>
+          <template v-for="list in extLinkList" :key="list">
             <q-item clickable @click="openURL(list.link)" :disable="list.disable">
               <q-item-section avatar>
                 <q-icon :name="list.icon" />
@@ -84,7 +84,8 @@
 
     </q-drawer>
 
-    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered width="240">
+    <!-- right drawer -->
+    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered width="240" behavior="mobile">
       <q-scroll-area class="fit">
         <q-list>
           <q-item clickable style="margin-top: 10px;" to="/search">
@@ -96,7 +97,7 @@
             </q-item-section>
           </q-item>
           <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(getRightIndex(i))" v-show="isFiltered(pageData[i].Title, i)">
-            <q-item-section>{{ getRightIndex(i) }}.{{ pageData[i].Title }}</q-item-section>
+            <q-item-section>{{ pageData[i].Index }}.{{ pageData[i].Title }}</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -112,7 +113,7 @@
 
 <style scoped>
 .bg-header{
-  background: linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat;
+  background: v-bind(backimg);
   /*background: linear-gradient(to top right, rgba(12, 121, 189, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat; */
 }
 </style>
@@ -147,20 +148,6 @@ const linksList = [
     disable: false
   },
   {
-    title: 'search-kun' ,
-    caption: '',
-    icon: 'info',
-    link: '/search',
-    disable: false
-  },
-  {
-    title: 'products' ,
-    caption: '',
-    icon: 'book',
-    link: '/products',
-    disable: true
-  },
-  {
     title: 'timeline',
     caption: '',
     icon: 'info',
@@ -174,14 +161,6 @@ const linksList = [
     link: '/about',
     disable: false
   },
-  {
-    title: 'mypage',
-    caption: '',
-    icon: 'help',
-    link: '/mypage',
-    disable: true
-  },
-  
 ];
 
 const extLinkList = [
@@ -215,15 +194,15 @@ const extLinkList = [
     link: 'http://blog.livedoor.jp/kai_tyou/',
     disable: false
   },
+];
+
+const nikaLinkList = [
   {
-    title: '予約電話',
+    title: 'みちくさでんわ',
     icon: 'home',
     link: 'http://blog.livedoor.jp/kai_tyou/',
     disable: true
   },
-];
-
-const nikaLinkList = [
   {
     title: '道草恋歌',
     icon: 'apps',
@@ -236,7 +215,6 @@ const nikaLinkList = [
     link: 'https://stamp.iranika.info/#/',
     disable: false
   },
-
 ]
 
 export default defineComponent({
@@ -252,7 +230,7 @@ export default defineComponent({
     const bookmarkStore = useBookmarkStore()
 
     function getRightIndex(index: number){
-      const ZureMin = 2;
+      const ZureMin = 3;
       const ZureMax = 79;
       if (ZureMin <= index && index < ZureMax){
         return index + 2
@@ -293,7 +271,8 @@ export default defineComponent({
       searchText,
       isFiltered,
       bookmarkStore,
-      openURL
+      openURL,
+      backimg: 'linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat'
     }
   }
 })

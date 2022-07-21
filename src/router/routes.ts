@@ -9,7 +9,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/Home.vue'),
         props: (route: { query: { page: string; }; }) => ({
           page: route.query.page
-        })
+        }),
+        name: 'top'
       },
       
       {
