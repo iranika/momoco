@@ -1,24 +1,52 @@
 /*
 */
 
+import axios from 'axios';
 import {reactive} from 'vue';
+
+interface ArchivesJson {
+  archivesUrl: string;
+  files: string[];
+}
 
 export class HeaderImgStore{
   public static instance: HeaderImgStore;
 
-  public imgList = reactive({
-    value: this.getImageList()
+  public archives = reactive({
+    value: <ArchivesJson>{
+      archivesUrl: '',
+      files: []
+    }
   })
 
   public current = reactive({
-    value: "https://mo4koma.iranika.info/top/achives/"
+    value: ''
   })
 
-  public getImageList(){
+  public getCurrent(top = 'https://mo4koma.iranika.info/top/top.webp'){
+    this.current.value = window.localStorage.getItem('header_img') ?? top;
+    return this.current.value;
+  }
+  public getFullpath(file: string){
+    return `${this.archives.value.archivesUrl}/${file}`
+  }
+
+  public setCurrent(url: string){
+    window.localStorage.setItem('header_img', url);
+    this.current.value = url;
+    //console.log('DEBUG: setCurrent',this.current.value);
+  }
+
+  public initCurrent(){
+    window.localStorage.removeItem('header_img');
+    this.getCurrent()
+  }
+
+  public syncImageList(jsonUrl = 'https://mo4koma.iranika.info/top/archives.json'){
     //TODO:画像リストを取得する
-    return [
-      "https://mo4koma.iranika.info/top/archives/seri7y.jpg"
-    ]
+    void axios.get(jsonUrl).then(res => {
+      this.archives.value = <ArchivesJson>res.data;
+    })
   }
 
   public static getInstance(): HeaderImgStore {
@@ -31,6 +59,8 @@ export class HeaderImgStore{
   constructor(caller: () => HeaderImgStore) {
     if (caller == HeaderImgStore.getInstance) {
       console.info('create instance of HeaderImgStore');
+      this.syncImageList();
+      this.getCurrent();
     } else if (HeaderImgStore.instance) {
       throw new Error(
         'Already created instance of HeaderImgStore. You should use HeaderImgStore.getInstance().'
@@ -41,6 +71,9 @@ export class HeaderImgStore{
       );
     }
   }
+}
+export function useHeaderImgStore(){
+  return HeaderImgStore.getInstance();
 }
 
 export class BookmarkStore {

@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHr lpR lfr">
 
-    <q-header reveal elevated reveal-offset="10" class="bg-primary text-white">
+    <q-header reveal elevated :reveal-offset="10" class="bg-primary text-white">
       <div class="bg-header">
         <q-toolbar>
           <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
@@ -85,7 +85,7 @@
     </q-drawer>
 
     <!-- right drawer -->
-    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered width="240" behavior="mobile">
+    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="240" behavior="mobile">
       <q-scroll-area class="fit">
         <q-list>
           <q-item clickable style="margin-top: 10px;" to="/search">
@@ -120,10 +120,11 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, } from 'vue';
+import { computed, defineComponent, ref, } from 'vue';
 import Footer from 'components/Footer.vue';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
 import { openURL } from 'quasar';
+import { useHeaderImgStore } from 'src/stores/LocalStorage';
 
 const linksList = [
   {
@@ -159,6 +160,13 @@ const linksList = [
     caption: '',
     icon: 'help',
     link: '/about',
+    disable: false
+  },
+  {
+    title: 'settings',
+    caption: '',
+    icon: 'settings',
+    link: '/settings',
     disable: false
   },
 ];
@@ -272,7 +280,9 @@ export default defineComponent({
       isFiltered,
       bookmarkStore,
       openURL,
-      backimg: 'linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat'
+      backimg: computed(()=>{
+        return `linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url(${useHeaderImgStore().current.value}) center center / cover no-repeat`
+      })
     }
   }
 })

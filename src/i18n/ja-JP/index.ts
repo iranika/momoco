@@ -12,5 +12,6 @@ export default {
   timeline: 'タイムライン',
   about: 'このアプリについて',
   mypage: 'マイページ',
-  collapse: '閉じる'
+  collapse: '閉じる',
+  settings: '設定'
 };
