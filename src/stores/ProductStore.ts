@@ -39,6 +39,9 @@ export class ProductsStore {
   public syncSpreadSheet(){
     void axios.get(ProductDBurl).then(res => {
       this.db.products = <Array<ProductInfo>>res.data;
+      //すずなさんと打ち上げ花火。【お休み用バイノーラル版】だけDLsiteでの販売がないのでパッチワーク
+      this.db.products[48].img = 'https://s2.booth.pm/b202d69d-2a2c-40cb-bffd-03236769e027/i/4153650/bb0183fb-e053-45f2-b5ba-7b8be5f07fff_base_resized.jpg'
+      this.db.products[48].dalf = 'https://momotori.booth.pm/items/4153650'
     })
   }
   constructor(caller: () => ProductsStore) {

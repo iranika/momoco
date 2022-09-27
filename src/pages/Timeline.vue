@@ -14,7 +14,7 @@
             </template>
             <img :src="db.products[i].img" style="width:100%; max-width: 500px;" />
             <div>
-              <q-btn type="a" flat :href="db.products[i].dalf">DLsiteの作品ページ</q-btn>
+              <q-btn type="a" flat :href="db.products[i].dalf">作品詳細（外部に移動します）</q-btn>
             </div>
           </q-timeline-entry>
         </template>
