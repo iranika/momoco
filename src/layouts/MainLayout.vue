@@ -88,7 +88,7 @@
     <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="240" behavior="mobile">
       <q-scroll-area class="fit">
         <q-list>
-          <q-item clickable style="margin-top: 10px;" to="/search">
+          <q-item style="margin-top: 10px;" clickable to="/search">
             <q-item-section>詳細検索をひらく</q-item-section>
           </q-item>
           <q-item>
@@ -96,7 +96,7 @@
               <q-input dense label="検索" v-model="searchText"></q-input>
             </q-item-section>
           </q-item>
-          <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(getRightIndex(i))" v-show="isFiltered(pageData[i].Title, i)">
+          <q-item clickable class="text-black" v-for="(_, i) in pageData" :key="i" :to="getPageUrl(pageData[i].Index)" v-show="isFiltered(pageData[i].Title, i)">
             <q-item-section>{{ pageData[i].Index }}.{{ pageData[i].Title }}</q-item-section>
           </q-item>
         </q-list>
@@ -146,6 +146,13 @@ const linksList = [
     caption: 'charactor',
     icon: 'info',
     link: '/charactor',
+    disable: false
+  },
+  {
+    title: 'search' ,
+    caption: 'search',
+    icon: 'search',
+    link: '/search',
     disable: false
   },
   {
@@ -249,11 +256,7 @@ export default defineComponent({
       }
     }
     function getPageUrl(index: number | string){
-      if (index == 'ri'){
-        return '/?page=rireki1' 
-      }else{
-        return `/?page=${(index).toString()}`;
-      }
+      return `/?page=${(index).toString()}`;
     }
 
     function isFiltered(title:string, index:number){

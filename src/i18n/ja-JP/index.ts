@@ -13,5 +13,6 @@ export default {
   about: 'このアプリについて',
   mypage: 'マイページ',
   collapse: '閉じる',
-  settings: '設定'
+  settings: '設定',
+  search: '検索くん'
 };
