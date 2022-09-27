@@ -16,20 +16,25 @@
       style="max-width: 900px; margin: 0 auto;"
     >
       <template v-slot:top-left>
-        <div class="text-h5">びゅあー検索くん㌼</div>
+        <div class="text-h5" style="margin-top:5px;">びゅあー検索くん㌼</div>
         <div>
-          <q-btn round fab-mini dense size="sm" v-for="(_, i) in chara" :key="i" @click="clickAvator(i)">
+          <q-btn round push size="sm" v-for="(_, i) in chara" :key="i" @click="clickAvator(i)">
             <q-avatar><img style="width:100%;" :src="chara[i].icon" /></q-avatar>
           </q-btn>
         </div>
       </template>
       <template v-slot:top-right>
         <q-btn label="クリア" flat @click="filter = ''"></q-btn>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search" filled>
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
+      </template>
+      <template v-slot:body-cell-Link="props">
+        <q-td :props="props">
+          <q-btn dense flat size="sm" icon="arrow_forward_ios" :to="`/?page=${props.row.No}`"></q-btn>
+        </q-td>          
       </template>
     </q-table>
 
