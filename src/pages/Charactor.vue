@@ -92,7 +92,7 @@ const chara = [
     name: 'suzusiro',
     namae: 'すずしろ/しろさん',
     icon: '/img/charactor/suzusiro-241.jpg',
-    cv: '餅よもぎ→<a href="https://twitter.com/hiyori_voice">御崎ひより</a>',
+    cv: '餅よもぎ→<a href="https://twitter.com/hiyori_voice">御崎ひより</a>→三月',
     cvArray: ['餅よもぎ','御崎ひより'],
     text: 'せりさんの世話係。\n三番目に道草屋歴が長い。道草屋の働き者。\nせりさん、ずなちゃんと一緒に暮らしている。\n湿気で癖毛の髪がもじゃるのが悩み。梅雨は大敵。\n花粉も大敵。あとお腹のお肉も大敵…\n春の七草のすずしろは、大根の別名。',
     contents: [
@@ -106,7 +106,7 @@ const chara = [
     cv: '<a href="https://twitter.com/toudourenge">藤堂れんげ</a>',
     cvArray: ['藤堂れんげ'],
     icon: '/img/charactor/suzuna-177.jpg',
-    text: '道草屋の可愛い代表。私服がちょっとダサ可愛いのも魅力のひとつ。\n真面目な良い子で沢山の人から愛されている。\n出身は北海道。祖母の伝手で道草屋で働きはじめた。今はせりさん、しろさんと一緒に暮らしている。\n最年少ゆえ世間知らずな一面もあるが、田舎における生活スキルが高く無人販売所を使いこなす田舎暮らしのプロ。\n実は能力保持者で、霊感だけでなく優位性アピール無力化（ドヤ顔キャンセル）など稀有な能力を持っている可能性がある[要出典]。\n春の七草の菘(すずな)は、カブの別名',
+    text: '道草屋の可愛い代表。私服がちょっとダサ可愛いのも魅力のひとつ。\n真面目な良い子で沢山の人から愛されている。\n出身は北海道。祖母の伝手で道草屋で働きはじめた。\n今はせりさん、しろさんと一緒に暮らしている。\n最年少ゆえ世間知らずな一面もあるが、田舎における生活スキルが高く無人販売所を使いこなす田舎暮らしのプロ。\n実は能力保持者で、霊感だけでなく優位性アピール無力化（ドヤ顔キャンセル）など稀有な能力を持っている可能性がある[要出典]。\n春の七草の菘(すずな)は、カブの別名',
     contents: [
       'ずなさんぷる',
       '<iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSY2NdJVC2yexGT79Qa4g0J450CKGuvtz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
@@ -118,7 +118,7 @@ const chara = [
     icon: '/img/charactor/hako-256.jpg',
     cv: '藤村咲樹→<a href="https://twitter.com/kotoka_11_28">琴香</a>',
     cvArray: ['藤村咲樹","琴香"'],
-    text: '道草屋のエッチなお姉さん。\nせりさんと幼馴染で二番目に道草屋歴が長い。\n丁寧な言葉遣いとは裏腹に悪戯好き。ずなちゃんと旦那様がよく悪戯の被害を受けている。\nバイク乗りで愛車を褒めると心を開く（ちょろい）。',
+    text: '道草屋のエッチなお姉さん。\nせりさんと幼馴染で二番目に道草屋歴が長い。\n丁寧な言葉遣いとは裏腹に悪戯好き。ずなちゃんと旦那様がよく悪戯の被害を受けている。\n最近は、なっちゃんもよく被害にあっているとか。\nバイク乗りで愛車を褒めると心を開いてくれるらしい。\nはこべらは春の七草のひとつ。ナデシコ科ハコベ属（Stellaria）。',
     contents: [
       'はこさんぷる',
       '<iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSY2NdJVC2yedk4HUf0oUOPVuhfeXirnm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
@@ -142,7 +142,7 @@ const chara = [
     cv: '<a href="https://twitter.com/aiedakyoko">愛枝今日子</a>',
     cvArray: ['愛枝今日子'],
     icon: '/img/charactor/tabirako-185.jpg',
-    text: 'いねさんとは同級生。\nいねさんのお世話が大好きで、まるで保護者。\n溢れ出る母性のせいか奥様と間違われたことがある。\n道草屋と実家のうどん屋を掛け持ちしているワーカーホリックで、うどんへの信頼と情熱がすごい。\n鉄瓶を育てるのが上手。私服がちょっとダサ可愛いのも魅力の一つ。\n春の七草のほとけのざの別名がオニタビラコ。',
+    text: 'いねさんとは同級生。\nいねさんのお世話が大好きで、まるで保護者。\n溢れ出る母性のせいか奥様と間違われたことがある。\n道草屋と実家のうどん屋を掛け持ちしているワーカーホリックで、うどんへの信頼と情熱がすごい。\n鉄瓶を育てるのが上手。私服がちょっとダサ可愛いのも魅力の一つ。\n春の七草のほとけのざの別名がオニタビラコ。\n鬼のようなたびさんは見たことがない。',
     contents: [
       'たびさんぷる',
       '<iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSY2NdJVC2yc-mFTjtErv4DF9YO0rj665" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
@@ -154,7 +154,7 @@ const chara = [
     cv: '<a href="https://twitter.com/hako_noah">箱河ノア</a>',
     cvArray: ['箱河ノア'],
     icon: '/img/charactor/inoko-251.jpg',
-    text: '名はいのこだが通称うりちゃん。\n独特な敬語を使う。活発だが圧倒的に運がない。\nずる賢いが、おかげで痛い目にもあっている。\n欲しいものを買うために道草屋で働き始めて、一度は退職したがとある理由で再就職したバイト戦士。\nはこさんから譲り受けたチョイノリ（原付）に乗っていたが、祖父の伝手でトリッカー（普通二輪）を譲り受けて乗り回している。\n夏の七草の猪子槌（いのこづち）に由来。',
+    text: '名はいのこだが通称うりちゃん。ずなちゃんと仲良し。\n独特な敬語を使う。活発でずる賢いが、おかげで痛い目にもあっている。\n欲しいものを買うために道草屋で働き始め、一度退職したがとある理由で再就職したバイト戦士。\nはこさんから譲り受けたチョイノリ（原付）に乗っていたが、祖父の伝手でトリッカー（普通二輪）を譲り受けて乗り回している。\n夏の七草の猪子槌（いのこづち）に由来。',
     contents: [
       'いのこさんぷる',
       '<iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSY2NdJVC2yfRdhG6DHOxA-MG2Ziduz8j" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
