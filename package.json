@@ -21,7 +21,10 @@
     "test:e2e": "cross-env NODE_ENV=test start-test \"quasar dev\" http-get://localhost:8080 \"cypress open\"",
     "test:e2e:ci": "cross-env NODE_ENV=test start-test \"quasar dev\" http-get://localhost:8080 \"cypress run\"",
     "test:component": "cross-env NODE_ENV=test cypress open-ct",
-    "test:component:ci": "cross-env NODE_ENV=test cypress run-ct"
+    "test:component:ci": "cross-env NODE_ENV=test cypress run-ct",
+    "build:ssg": "quasar ssg generate",
+    "dev:ssg": "quasar ssg dev",
+    "serve:ssg": "quasar ssg serve dist/ssg"
   },
   "dependencies": {
     "@quasar/extras": "^1.14.0",
@@ -50,6 +53,7 @@
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-vue": "^7.0.0",
     "gh-pages": "^3.1.0",
+    "quasar-app-extension-ssg": "^4.5.8",
     "workbox-webpack-plugin": "^6.4.0"
   },
   "browserslist": [
