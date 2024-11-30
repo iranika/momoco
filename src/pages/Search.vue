@@ -34,7 +34,7 @@
       <template v-slot:body-cell-Link="props">
         <q-td :props="props">
           <q-btn dense flat size="sm" icon="arrow_forward_ios" :to="`/?page=${props.row.No}`"></q-btn>
-        </q-td>          
+        </q-td>
       </template>
     </q-table>
 
@@ -45,7 +45,7 @@
 import { defineComponent, ref, computed } from 'vue'
 import { useSearchStore, SearchDB } from 'src/stores/SearchStore';
 
-const chara = 
+const chara =
   [
     {
       name: 'seri',
@@ -64,7 +64,7 @@ const chara =
       namae: 'すずしろ',
       icon: '/img/charactor/suzusiro-241.jpg',
       cv: '餅よもぎ→<a href="https://twitter.com/hiyori_voice">御崎ひより</a>',
-      cvArray: ['餅よもぎ','御崎ひより'],
+      cvArray: ['餅よもぎ','御崎ひより','三月'],
       text: 'せりさんの世話係。\n三番目に道草屋歴が長い。道草屋の働き者。\nせりさん、ずなちゃんと一緒に暮らしている。\n湿気で癖毛の髪がもじゃるのが悩み。梅雨は大敵。\n花粉も大敵。あとお腹のお肉も大敵…\n春の七草のすずしろは、大根の別名。',
       contents: [
         'しろさんぷる',
@@ -111,7 +111,7 @@ const chara =
       name: 'tabirako',
       namae: 'たびらこ',
       cv: '<a href="https://twitter.com/aiedakyoko">愛枝今日子</a>',
-      cvArray: ['愛枝今日子'],
+      cvArray: ['愛枝今日子','ルナ'],
       icon: '/img/charactor/tabirako-185.jpg',
       text: 'いねさんとは同級生。\nいねさんのお世話が大好きで、まるで保護者。\n溢れ出る母性のせいか奥様と間違われたことがある。\n道草屋と実家のうどん屋を掛け持ちしているワーカーホリックで、うどんへの信頼と情熱がすごい。\n鉄瓶を育てるのが上手。私服がちょっとダサ可愛いのも魅力の一つ。\n春の七草のほとけのざの別名がオニタビラコ。',
       contents: [
@@ -191,7 +191,7 @@ export default defineComponent({
         filter.value += chara[index].namae + ','
       }
     }
-    
+
     const filterMethod = (rows: Array<SearchDB>)=>{
       if (rows == null || typeof rows === 'boolean') {
         console.info('rows mismatch. rows need type of SearchDB[].',rows)
@@ -213,7 +213,7 @@ export default defineComponent({
         if (row.Charactors.join(',').includes(w)) return !rebase;
         if (row.Keyword.join(',').includes(w)) return !rebase;
         if (row.Comment.includes(w)) return !rebase;
-        return rebase;  
+        return rebase;
       }
 
       return rows.filter(row => {

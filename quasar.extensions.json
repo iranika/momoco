@@ -12,12 +12,6 @@
       "typescript"
     ]
   },
-  "@quasar/testing-e2e-cypress": {
-    "options": [
-      "scripts",
-      "typescript"
-    ]
-  },
   "ssg": {
     "scripts": true,
     "inlineCriticalCss": true,
