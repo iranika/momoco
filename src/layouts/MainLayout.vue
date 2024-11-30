@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHr lpR lfr">
 
-    <q-header reveal elevated :reveal-offset="10" class="bg-primary text-white">
+    <q-header reveal elevated :reveal-offset="2" class="bg-primary text-white">
       <div class="bg-header">
         <q-toolbar>
           <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
@@ -46,7 +46,7 @@
               <q-item-section>
                 {{ list.disable ? $t(list.title) + " : WIP" : $t(list.title) }}
               </q-item-section>
-            </q-item>  
+            </q-item>
           </template>
           <q-item-label header caption>みちくさやのあぷり</q-item-label>
           <template v-for="list in nikaLinkList" :key="list">

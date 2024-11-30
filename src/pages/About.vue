@@ -47,7 +47,7 @@
           <div class="text-h6">プライバシーポリシー</div>
           <q-separator />
           <div style="margin-top: 20px;">
-            <a href="https://iranika.github.io/policy/MichikusaViewer.index">プライバシーポリシーはこちら</a><br>
+            <a href="https://iranika.github.io/policy/MichikusaViewer">プライバシーポリシーはこちら</a><br>
             ※外部サイトに移動します
           </div>
         </q-card-section>

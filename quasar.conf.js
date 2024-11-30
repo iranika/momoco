@@ -94,7 +94,7 @@ module.exports = configure(function (ctx) {
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
+      // lang: 'ja-JP', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -161,13 +161,18 @@ module.exports = configure(function (ctx) {
         short_name: 'momoco',
         description: 'A Quasar Framework app',
         display: 'standalone',
-        orientation: 'portrait',
+        //orientation: 'portrait',
         start_url: './index.html',
         themeColor: "#2d3748",
         msTileColor: "#2d3748",
         appleMobileWebAppCapable: "no",
         appleMobileWebAppStatusBarStyle: "default",
         icons: [
+          {
+            src: 'icons/icon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png'
+          },
           {
             src: 'icons/icon-128x128.png',
             sizes: '128x128',
