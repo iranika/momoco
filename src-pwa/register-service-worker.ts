@@ -1,4 +1,6 @@
 import { register } from 'register-service-worker';
+import { Notify } from 'quasar';
+import { mdiCached } from '@quasar/extras/mdi-v7';
 
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.
@@ -25,10 +27,35 @@ register(process.env.SERVICE_WORKER_FILE, {
 
   updatefound (/* registration */) {
     // console.log('New content is downloading.')
+    console.log('New content is downloading.')
   },
 
   updated (/* registration */) {
     // console.log('New content is available; please refresh.')
+    console.log('New content is available; please refresh.');
+    Notify.create({
+      color: 'secondary',
+      icon: mdiCached,
+      message: 'びゅあーの更新があります',
+      timeout: 0,
+      multiLine: true,
+      position: 'top',
+      actions: [
+        {
+          label: '更新する',
+          color: 'yellow',
+          handler: () => {
+            window.location.reload()
+          }
+        },
+        {
+          label: 'Cancel',
+          color: 'white',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          handler: () => {}
+        }
+      ]
+    })
   },
 
   offline () {

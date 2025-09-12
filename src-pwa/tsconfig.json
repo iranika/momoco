@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "lib": ["WebWorker", "ESNext", "DOM"],
-    "types": ["src/@types/window.d.ts"]
+    "types": ["../src/@types/window.d.ts"]
   },
   "include": ["*.ts", "*.d.ts"]
 }
