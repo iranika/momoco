@@ -4,16 +4,16 @@
       <q-btn size="x-small" color="white" class="text-black" @click="beforeContent" rounded>▲前のお話▲</q-btn>
     </div>
     <div v-for="i in show" :key="i">
-      <img v-for="(_, j) in pages[i]?.ImagesUrl" :key="j" :src="pages[i]?.ImagesUrl[j]
+      <img alt="" v-for="(_, j) in pages[i]?.ImagesUrl" :key="j" :src="pages[i]?.ImagesUrl[j]
         ? pages[i].ImagesUrl[j].replace('/ja/', '/ja/webp/').replace('.jpg', '.webp')
         : ''" class="img4koma" scrollable />
       <div style="display: flex; justify-content: center;">
         <TwitterShareButton :link="CreateShareLinkTwitter(i + 1, pages[i]?.Title ?? '')" />
         <!-- NOTE:ブックマーク機能の実装 -->
-        <q-btn :color="bookmarkStore.isIncludeBookmark(i + 1) ? 'grey' : 'green'" class="text-white" rounded size="xs"
+        <q-btn aria-label="しおり" :color="bookmarkStore.isIncludeBookmark(i + 1) ? 'grey' : 'green'" class="text-white" rounded size="xs"
           @click="bookmarkStore.clickBookmark(i + 1)"><q-icon name="book" />しおり</q-btn>
         <!-- NOTE: MEMOボタンの実装 -->
-        <q-btn color="orange" class="text-white" rounded size="xs" v-if="db.memos[i] && db.memos[i] != null"
+        <q-btn aria-label="Memo" color="orange" class="text-white" rounded size="xs" v-if="db.memos[i] && db.memos[i] != null"
           v-on:click="memo = db.memos[i]; memodal = !memodal">
           <q-icon name="book" />Memo
         </q-btn>

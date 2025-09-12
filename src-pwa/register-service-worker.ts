@@ -51,7 +51,6 @@ register(process.env.SERVICE_WORKER_FILE, {
         {
           label: 'Cancel',
           color: 'white',
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           handler: () => {}
         }
       ]
