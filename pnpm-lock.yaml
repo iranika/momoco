@@ -40,7 +40,7 @@ importers:
         specifier: ^11.0.0
         version: 11.2.3(@vue/compiler-dom@3.5.34)(eslint@9.39.4)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.14(@types/node@22.19.19)(esbuild@0.27.7)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(vue-i18n@11.4.4(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
       '@quasar/app-vite':
-        specifier: ^2.5.1
+        specifier: ^2.6.0
         version: 2.6.0(@quasar/extras@1.18.0)(@types/node@22.19.19)(eslint@9.39.4)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3)))(quasar@2.19.3)(rolldown@1.0.2)(rollup@4.60.4)(sass@1.100.0)(terser@5.48.0)(typescript@5.9.3)(vue-router@5.0.7(@vue/compiler-sfc@3.5.34)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))(workbox-build@7.4.1)(yaml@2.9.0)
       '@types/node':
         specifier: ^22.19.11

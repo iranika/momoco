@@ -44,6 +44,11 @@ const routes: RouteRecordRaw[] = [
         path: '/settings',
         component: () => import('pages/ChooseHeader.vue'),
       },
+      {
+        path: '/dlsite',
+        name: 'dlsite',
+        component: () => import('pages/DLsite.vue'),
+      },
     ],
   },
 
