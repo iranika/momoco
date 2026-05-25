@@ -1,41 +1,43 @@
 <template>
   <q-layout view="lHr lpR lfr">
-    <q-header reveal elevated :reveal-offset="2" class="bg-primary text-white">
-      <div class="bg-header">
-        <q-toolbar>
-          <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-          <q-space />
-          <!-- Bookmark menu -->
-          <q-btn dense flat round icon="book">
-            <q-menu>
-              <q-list padding>
-                <q-item-label header>しおり</q-item-label>
-                <q-item
-                  class="text-black"
-                  v-for="val in bookmarkStore.bookmarks.value.sort((a, b) => Number(a) - Number(b))"
-                  :key="val"
-                  :to="getPageUrl(Number(val))"
-                >
-                  <q-item-section>第{{ val }}話</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-          <!-- LeftDrawer Button -->
-          <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer" />
-        </q-toolbar>
-        <q-toolbar inset>
-          <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
-        </q-toolbar>
-        <q-toolbar inset>
-          <q-tabs>
-            <q-route-tab to="/" label="Home" exact />
-            <q-route-tab to="/?page=latest" label="Latest" exact />
-            <q-route-tab to="/character" label="Character" exact />
-          </q-tabs>
-        </q-toolbar>
-      </div>
-    </q-header>
+    <transition name="header-slide">
+      <q-header v-show="showHeader" reveal elevated :reveal-offset="2" class="bg-primary text-white">
+        <div class="bg-header">
+          <q-toolbar>
+            <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+            <q-space />
+            <!-- Bookmark menu -->
+            <q-btn dense flat round icon="book">
+              <q-menu>
+                <q-list padding>
+                  <q-item-label header>しおり</q-item-label>
+                  <q-item
+                    class="text-black"
+                    v-for="val in bookmarkStore.bookmarks.value.sort((a, b) => Number(a) - Number(b))"
+                    :key="val"
+                    :to="getPageUrl(Number(val))"
+                  >
+                    <q-item-section>第{{ val }}話</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+            <!-- LeftDrawer Button -->
+            <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer" />
+          </q-toolbar>
+          <q-toolbar inset>
+            <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
+          </q-toolbar>
+          <q-toolbar inset>
+            <q-tabs>
+              <q-route-tab to="/" label="Home" exact />
+              <q-route-tab to="/?page=latest" label="Latest" exact />
+              <q-route-tab to="/character" label="Character" exact />
+            </q-tabs>
+          </q-toolbar>
+        </div>
+      </q-header>
+    </transition>
 
     <!-- Left Drawer -->
     <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered behavior="mobile">
@@ -122,6 +124,7 @@
     </q-drawer>
 
     <q-page-container>
+      <q-scroll-observer @scroll="onScroll" />
       <router-view />
     </q-page-container>
     <AppFooter />
@@ -132,6 +135,15 @@
 .bg-header {
   background: v-bind(backimg);
   /*background: linear-gradient(to top right, rgba(12, 121, 189, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat; */
+}
+
+.header-slide-enter-active,
+.header-slide-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+.header-slide-enter-from,
+.header-slide-leave-to {
+  opacity: 0;
 }
 </style>
 
@@ -280,8 +292,29 @@ export default defineComponent({
       return `${num}.${title}`.toString().includes(searchText.value);
     }
 
+    const showHeader = ref(true);
+    let lastScroll = 0;
+    let accumulatedUp = 0;
+    const threshold = 150;
+
+    function onScroll({ position: {top} }: { position: {top: number} }) {
+      const current = top;
+      if(current > lastScroll){
+        accumulatedUp = 0;
+      }else{
+        //scrolling up
+        accumulatedUp += lastScroll - current;
+        if(accumulatedUp > threshold){
+          showHeader.value = true;
+         }
+      }
+      lastScroll = current;
+    }
+
     return {
       extLinkList,
+      onScroll,
+      showHeader,
       linksList,
       nikaLinkList,
       getPageUrl,
