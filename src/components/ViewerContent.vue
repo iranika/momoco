@@ -14,7 +14,7 @@
         scrollable
       />
       <div style="display: flex; justify-content: center">
-        <TwitterShareButton :link="CreateShareLinkTwitter(i + 1, page.Title)" />
+        <TwitterShareButton :link="CreateShareLinkTwitter(page.Index, page.Title)" />
         <!-- NOTE:ブックマーク機能の実装 -->
         <q-btn
           :color="bookmarkStore.isIncludeBookmark(page.Index) ? 'grey' : 'green'"
@@ -189,7 +189,7 @@ export default defineComponent({
         return [0];
       }
     }
-    function CreateShareLinkTwitter(num: number, title: string) {
+    function CreateShareLinkTwitter(num: number | string, title: string) {
       const tw_text = encodeURI(`第${num}話「${title}」`);
       return `https://twitter.com/intent/tweet?hashtags=%E9%81%93%E8%8D%89%E5%B1%8B&original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonText%3D%25E3%2581%2593%25E3%2581%2593%25E3%2581%2599%25E3%2581%258D%25EF%25BC%2581%25EF%25BC%2581%2523%25E3%2581%25buttonUrl=BF%25E3%2581%25A1%25E3%2581%258F%25E3%2581%2595%25E3%2581%25B3%25E3%2582%2585%25E3%2581%2582%25E3%2583%25BC%26buttonType%3DTweetButton%26buttonUrl%3Dhttps%253A%252F%252F${location.host}%252F%252310%26dnt%3D1%26lang%3Dja%26widget%3DButton&ref_src=twsrc%5Etfw&text=${tw_text}&tw_p=tweetbutton&url=https%3A%2F%2F${location.host}%2F%23%2F%3Fpage%3D${num}`;
     }
