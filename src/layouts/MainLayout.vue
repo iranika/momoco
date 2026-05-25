@@ -139,7 +139,7 @@
 
 .header-slide-enter-active,
 .header-slide-leave-active {
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .header-slide-enter-from,
 .header-slide-leave-to {
@@ -300,6 +300,8 @@ export default defineComponent({
     function onScroll({ position: {top} }: { position: {top: number} }) {
       const current = top;
       if(current > lastScroll){
+        //scrolling down
+        showHeader.value = false;
         accumulatedUp = 0;
       }else{
         //scrolling up
