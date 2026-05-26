@@ -1,7 +1,13 @@
 <template>
   <q-layout view="lHr lpR lfr">
     <transition name="header-slide">
-      <q-header v-show="showHeader" reveal elevated :reveal-offset="2" class="bg-primary text-white">
+      <q-header
+        v-show="showHeader"
+        reveal
+        elevated
+        :reveal-offset="2"
+        class="bg-primary text-white"
+      >
         <div class="bg-header">
           <q-toolbar>
             <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
@@ -13,7 +19,9 @@
                   <q-item-label header>しおり</q-item-label>
                   <q-item
                     class="text-black"
-                    v-for="val in bookmarkStore.bookmarks.value.sort((a, b) => Number(a) - Number(b))"
+                    v-for="val in bookmarkStore.bookmarks.value.sort(
+                      (a, b) => Number(a) - Number(b),
+                    )"
                     :key="val"
                     :to="getPageUrl(Number(val))"
                   >
@@ -295,20 +303,20 @@ export default defineComponent({
     const showHeader = ref(true);
     let lastScroll = 0;
     let accumulatedUp = 0;
-    const threshold = 150;
+    const threshold = 110;
 
-    function onScroll({ position: {top} }: { position: {top: number} }) {
+    function onScroll({ position: { top } }: { position: { top: number } }) {
       const current = top;
-      if(current > lastScroll){
+      if (current > lastScroll) {
         //scrolling down
         showHeader.value = false;
         accumulatedUp = 0;
-      }else{
+      } else {
         //scrolling up
         accumulatedUp += lastScroll - current;
-        if(accumulatedUp > threshold){
+        if (accumulatedUp > threshold) {
           showHeader.value = true;
-         }
+        }
       }
       lastScroll = current;
     }
