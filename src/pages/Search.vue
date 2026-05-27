@@ -151,6 +151,22 @@ const chara = [
   },
 ];
 
+const toStringArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is string => typeof item === 'string')
+      .map((item) => item.trim())
+      .filter((item) => item !== '');
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(/,|、/)
+      .map((item) => item.trim())
+      .filter((item) => item !== '');
+  }
+  return [];
+};
+
 const columns: QTableColumn<SearchDB>[] = [
   {
     name: 'No',
@@ -174,14 +190,14 @@ const columns: QTableColumn<SearchDB>[] = [
     align: 'left',
     field: 'Characters',
     sortable: true,
-    format: (val: Array<string>) => val.join(','),
+    format: (val: unknown) => toStringArray(val).join(','),
   },
   {
     name: 'Keyword',
     label: 'キーワード',
     align: 'left',
     field: 'Keyword',
-    format: (val: Array<string>) => val.join(','),
+    format: (val: unknown) => toStringArray(val).join(','),
   },
   //{ name: 'Comment', label: 'コメント', align: 'left', field: 'Comment' },
   { name: 'Link', label: 'リンク', align: 'left', field: 'No' },
@@ -227,8 +243,8 @@ export default defineComponent({
       function isInclude(row: SearchDB, w: string, rebase = false) {
         if (String(row.No).includes(w)) return !rebase;
         if (row.Title.includes(w)) return !rebase;
-        if (row.Characters.join(',').includes(w)) return !rebase;
-        if (row.Keyword.join(',').includes(w)) return !rebase;
+        if (toStringArray(row.Characters).join(',').includes(w)) return !rebase;
+        if (toStringArray(row.Keyword).join(',').includes(w)) return !rebase;
         if (row.Comment.includes(w)) return !rebase;
         return rebase;
       }
@@ -237,7 +253,7 @@ export default defineComponent({
         return words.every((w) => {
           if (w[0] == '!') {
             //return isInclude(row, w, true)
-            if (!row.Characters.join(',').includes(w.replace('!', ''))) return true;
+            if (!toStringArray(row.Characters).join(',').includes(w.replace('!', ''))) return true;
             return false;
           } else {
             return isInclude(row, w);

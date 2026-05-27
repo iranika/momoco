@@ -20,6 +20,41 @@ export interface SearchDB extends SearchInfo {
   Title: string;
 }
 
+const toStringArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is string => typeof item === 'string')
+      .map((item) => item.trim())
+      .filter((item) => item !== '');
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(/,|、/)
+      .map((item) => item.trim())
+      .filter((item) => item !== '');
+  }
+  return [];
+};
+
+const normalizeSearchInfo = (value: unknown): SearchInfo => {
+  const fallback: SearchInfo = {
+    Characters: [],
+    Keyword: [],
+    Comment: '※検索DBに情報が追記されていません',
+  };
+
+  if (value == null || typeof value !== 'object') {
+    return fallback;
+  }
+
+  const raw = value as Partial<SearchInfo>;
+  return {
+    Characters: toStringArray(raw.Characters),
+    Keyword: toStringArray(raw.Keyword),
+    Comment: typeof raw.Comment === 'string' ? raw.Comment : fallback.Comment,
+  };
+};
+
 export class SearchStore {
   public static instance: SearchStore;
 
@@ -44,17 +79,15 @@ export class SearchStore {
       });
       this.products.value = window.pageData.map((v, i) => {
         if (this.extDB[i]) {
-          return Object.assign({ Title: v.Title, No: i + 1 }, this.extDB[i]);
+          return Object.assign({ Title: v.Title, No: i + 1 }, normalizeSearchInfo(this.extDB[i]));
         } else {
           return Object.assign(
             { Title: v.Title, No: i + 1 },
             {
               No: i + 1,
               Title: 'Non title',
-              Characters: [],
-              Keyword: [],
-              Comment: '※検索DBに情報が追記されていません',
             },
+            normalizeSearchInfo(undefined),
           );
         }
       });
