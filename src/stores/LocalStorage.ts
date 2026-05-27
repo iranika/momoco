@@ -76,6 +76,60 @@ export function useHeaderImgStore() {
   return HeaderImgStore.getInstance();
 }
 
+export class HeaderVisibilityStore {
+  public static instance: HeaderVisibilityStore;
+
+  public showHeader = reactive({
+    value: true,
+  });
+  public isForced = reactive({
+    value: false,
+  });
+
+  public setVisible(visible: boolean) {
+    this.showHeader.value = visible;
+  }
+
+  public toggle() {
+    this.showHeader.value = !this.showHeader.value;
+  }
+
+  public forceToggle() {
+    this.isForced.value = true;
+    this.showHeader.value = !this.showHeader.value;
+  }
+
+  public releaseForce() {
+    this.isForced.value = false;
+  }
+
+  public static getInstance(): HeaderVisibilityStore {
+    if (!this.instance) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.instance = new HeaderVisibilityStore(HeaderVisibilityStore.getInstance);
+    }
+    return this.instance;
+  }
+
+  constructor(caller: () => HeaderVisibilityStore) {
+    if (caller == HeaderVisibilityStore.getInstance) {
+      console.info('create instance of HeaderVisibilityStore');
+    } else if (HeaderVisibilityStore.instance) {
+      throw new Error(
+        'Already created instance of HeaderVisibilityStore. You should use HeaderVisibilityStore.getInstance().',
+      );
+    } else {
+      throw new Error(
+        'Constractor args valided illegal. You should use HeaderVisibilityStore.getInstance()',
+      );
+    }
+  }
+}
+
+export function useHeaderVisibilityStore() {
+  return HeaderVisibilityStore.getInstance();
+}
+
 export class BookmarkStore {
   public static instance: BookmarkStore;
 

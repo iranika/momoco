@@ -2,7 +2,7 @@
   <q-layout view="lHr lpR lfr">
     <transition name="header-slide">
       <q-header
-        v-show="showHeader"
+        v-show="showHeader.value"
         reveal
         elevated
         :reveal-offset="2"
@@ -160,7 +160,7 @@ import { computed, defineComponent, ref } from 'vue';
 import AppFooter from 'components/Footer.vue';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
 import { openURL } from 'quasar';
-import { useHeaderImgStore } from 'src/stores/LocalStorage';
+import { useHeaderImgStore, useHeaderVisibilityStore } from 'src/stores/LocalStorage';
 
 const linksList = [
   {
@@ -300,12 +300,18 @@ export default defineComponent({
       return `${num}.${title}`.toString().includes(searchText.value);
     }
 
-    const showHeader = ref(true);
+    const headerVisibilityStore = useHeaderVisibilityStore();
+    const showHeader = headerVisibilityStore.showHeader;
     let lastScroll = 0;
     let accumulatedUp = 0;
     const threshold = 110;
 
     function onScroll({ position: { top } }: { position: { top: number } }) {
+      if (headerVisibilityStore.isForced.value) {
+        lastScroll = top;
+        accumulatedUp = 0;
+        return;
+      }
       const current = top;
       if (current > lastScroll) {
         //scrolling down
