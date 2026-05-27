@@ -9,7 +9,11 @@
         :icon="headerVisible ? 'fullscreen' : 'fullscreen_exit'"
         color="white"
         class="text-black"
-      />
+      >
+        <q-tooltip>
+          {{ headerVisible ? 'ヘッダを非表示' : 'ヘッダを表示' }}
+        </q-tooltip>
+      </q-btn>
     </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn size="small" round @click="scrollTop()" icon="keyboard_arrow_up" color="white" class="text-black"/>
