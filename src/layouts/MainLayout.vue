@@ -257,7 +257,7 @@ const nikaLinkList = [
   {
     title: '道草恋歌',
     icon: 'apps',
-    link: 'https://michikusa-renka.glideapp.io/',
+    link: 'https://michikusa-renka.glide.page/',
     disable: false,
   },
   {
