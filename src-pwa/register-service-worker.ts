@@ -6,6 +6,14 @@ import { mdiCached } from '@quasar/extras/mdi-v7';
 // events passes a ServiceWorkerRegistration instance in their arguments.
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
 
+let refreshing = false;
+
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  if (refreshing) return;
+  refreshing = true;
+  window.location.reload();
+});
+
 register(process.env.SERVICE_WORKER_FILE, {
   // The registrationOptions object will be passed as the second argument
   // to ServiceWorkerContainer.register()
@@ -29,8 +37,7 @@ register(process.env.SERVICE_WORKER_FILE, {
     console.log('New content is downloading.');
   },
 
-  updated(/* registration */) {
-    //self.ServiceWorker;
+  updated(registration) {
     console.log('New content is available; please refresh.');
     Notify.create({
       color: 'secondary',
@@ -44,6 +51,10 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: '更新する',
           color: 'yellow',
           handler: () => {
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+              return;
+            }
             window.location.reload();
           },
         },
