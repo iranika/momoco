@@ -1,7 +1,7 @@
 <template>
   <q-page padding class="bg">
     <ViewerContent :page="page" />
-    <q-page-sticky position="bottom-right" :offset="[18, 64]">
+    <q-page-sticky position="bottom-right" :offset="[18, 110]">
       <q-btn
         size="small"
         round
@@ -15,8 +15,30 @@
         </q-tooltip>
       </q-btn>
     </q-page-sticky>
+    <q-page-sticky position="bottom-right" :offset="[18, 64]">
+      <q-btn
+        size="small"
+        round
+        @click="toggleAutoLoad()"
+        :icon="autoLoad ? 'autorenew' : 'pause'"
+        color="white"
+        class="text-black"
+        :aria-pressed="autoLoad"
+      >
+        <q-tooltip>
+          {{ autoLoad ? '自動で続きを読む（ON）' : '手動で続きを表示（OFF）' }}
+        </q-tooltip>
+      </q-btn>
+    </q-page-sticky>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn size="small" round @click="scrollTop()" icon="keyboard_arrow_up" color="white" class="text-black"/>
+      <q-btn
+        size="small"
+        round
+        @click="scrollTop()"
+        icon="keyboard_arrow_up"
+        color="white"
+        class="text-black"
+      />
     </q-page-sticky>
     <!-- content -->
   </q-page>
@@ -24,7 +46,7 @@
 
 <style scoped>
 .bg {
-  background-image: url("../assets/bg.jpg");
+  background-image: url('../assets/bg.jpg');
   background-repeat: repeat;
   background-size: 100%;
 }
@@ -33,7 +55,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ViewerContent from 'components/ViewerContent.vue';
-import { useHeaderVisibilityStore } from 'src/stores/LocalStorage';
+import { useAutoLoadStore, useHeaderVisibilityStore } from 'src/stores/LocalStorage';
 
 export default defineComponent({
   props: {
@@ -46,21 +68,27 @@ export default defineComponent({
       default: 'ja',
     },
   },
-  components:{
-    ViewerContent
+  components: {
+    ViewerContent,
   },
   computed: {
     headerVisible() {
       return useHeaderVisibilityStore().showHeader.value;
     },
+    autoLoad() {
+      return useAutoLoadStore().enabled.value;
+    },
   },
-  methods:{
-    toggleHeader(){
+  methods: {
+    toggleHeader() {
       useHeaderVisibilityStore().forceToggle();
     },
-    scrollTop(){
-      scrollTo(0, 0)
-    }
-  }
-})
+    toggleAutoLoad() {
+      useAutoLoadStore().toggle();
+    },
+    scrollTop() {
+      scrollTo(0, 0);
+    },
+  },
+});
 </script>

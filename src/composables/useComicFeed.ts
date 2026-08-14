@@ -1,5 +1,6 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
 import { estimateEpisodeHeight, viewerContentWidth } from 'src/utils/komaAspect';
+import { useAutoLoadStore } from 'src/stores/LocalStorage';
 
 /** Load the next episode before the sentinel is this close to the viewport. */
 const LOAD_AHEAD_VIEWPORTS = 1.25;
@@ -26,7 +27,9 @@ function initialLastIndex(
   pages: Page[],
   start: number,
   aspectByUrl: Record<string, string>,
+  autoLoad: boolean,
 ): number {
+  if (!autoLoad) return start;
   const first = pages[start];
   if (!first) return start;
   const width = viewerContentWidth();
@@ -54,6 +57,7 @@ export function useComicFeed(
   aspectByUrl: Ref<Record<string, string>>,
   sentinel: Ref<HTMLElement | null>,
 ) {
+  const autoLoadStore = useAutoLoadStore();
   const startIndex = ref(0);
   const lastIndex = ref(0);
   let observer: IntersectionObserver | null = null;
@@ -64,7 +68,12 @@ export function useComicFeed(
   function resetTo(page: string) {
     const start = resolvePageIndex(pages, page);
     startIndex.value = start;
-    lastIndex.value = initialLastIndex(pages, start, aspectByUrl.value);
+    lastIndex.value = initialLastIndex(
+      pages,
+      start,
+      aspectByUrl.value,
+      autoLoadStore.enabled.value,
+    );
   }
 
   resetTo(pageQuery.value);
@@ -90,7 +99,7 @@ export function useComicFeed(
   }
 
   function shouldLoadMore(): boolean {
-    if (!hasMore.value) return false;
+    if (!autoLoadStore.enabled.value || !hasMore.value) return false;
     const distance = distanceToSentinel();
     if (distance != null && distance < loadAheadPx()) return true;
     const scrolling = document.scrollingElement;
@@ -166,8 +175,15 @@ export function useComicFeed(
     if (!hasMore.value) return;
     lastIndex.value += 1;
     await nextTick();
-    void ensureLookahead();
+    if (autoLoadStore.enabled.value) void ensureLookahead();
   }
+
+  watch(
+    () => autoLoadStore.enabled.value,
+    (enabled) => {
+      if (enabled) void ensureLookahead();
+    },
+  );
 
   watch(
     () => pageQuery.value,
