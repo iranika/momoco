@@ -1,5 +1,5 @@
 <template>
-  <div class="viewer-content" v-scroll="scrolled">
+  <div class="viewer-content">
     <div centered style="text-align: center; padding: 10px" v-if="Math.min.apply(null, show) > 0">
       <q-btn size="x-small" color="white" class="text-black" @click="beforeContent" rounded
         >▲前のお話▲</q-btn
@@ -109,7 +109,6 @@
 </style>
 
 <script lang="ts">
-import { debounce } from 'quasar';
 import { computed, defineComponent, ref, watch } from 'vue';
 import TwitterShareButton from 'components/TwitterShareButton.vue';
 import useMemoStore from 'src/stores/MemoStore';
@@ -210,20 +209,6 @@ export default defineComponent({
         console.log('viewerContent info: can not show page under 0');
       }
     }
-    function bottomVisible() {
-      const scrollY = window.scrollY;
-      const visible = window.innerHeight;
-      const pageHeight = document.documentElement.scrollHeight;
-      const bottomOfPage = visible + scrollY + 2 >= pageHeight; // +2 is margin
-      //console.log("bottomVisible is fired", {scrollY, visible, pageHeight, bottomOfPage})
-      return bottomOfPage || pageHeight < visible;
-    }
-
-    const scrolled = debounce(() => {
-      if (bottomVisible()) {
-        addContent();
-      }
-    }, 200);
 
     function initShow(page: string) {
       const pageInt = parseInt(page);
@@ -268,7 +253,6 @@ export default defineComponent({
       onKomaLoad,
       addContent,
       beforeContent,
-      scrolled,
       CreateShareLinkTwitter,
       bookmarkStore,
     };
