@@ -163,7 +163,7 @@ export function useComicFeed(
   watch(sentinel, () => {
     observe();
     void ensureLookahead();
-  });
+  }, { flush: 'post' });
 
   function onResize() {
     void ensureLookahead();
