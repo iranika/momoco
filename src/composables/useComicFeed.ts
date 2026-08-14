@@ -1,8 +1,8 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
 import { estimateEpisodeHeight, viewerContentWidth } from 'src/utils/komaAspect';
 
-/** Keep roughly this many viewports of comic below the fold before appending more. */
-const BELOW_FOLD_VIEWPORTS = 1.5;
+/** Load the next episode before the sentinel is this close to the viewport. */
+const LOAD_AHEAD_VIEWPORTS = 1.25;
 const MAX_APPEND_PER_TICK = 8;
 
 export function resolvePageIndex(pages: Page[], page: string): number {
@@ -18,8 +18,8 @@ export function resolvePageIndex(pages: Page[], page: string): number {
   return 0;
 }
 
-function targetBelowFoldPx(): number {
-  return window.innerHeight * BELOW_FOLD_VIEWPORTS;
+function loadAheadPx(): number {
+  return Math.max(640, window.innerHeight * LOAD_AHEAD_VIEWPORTS);
 }
 
 function initialLastIndex(
@@ -32,7 +32,7 @@ function initialLastIndex(
   const width = viewerContentWidth();
   let last = start;
   let height = estimateEpisodeHeight(width, aspectByUrl, first);
-  const target = (window.innerHeight || 800) * (1 + BELOW_FOLD_VIEWPORTS);
+  const target = (window.innerHeight || 800) * (1 + LOAD_AHEAD_VIEWPORTS);
   const minLast = Math.min(pages.length - 1, start + 1);
   while (last < pages.length - 1 && (height < target || last < minLast)) {
     last += 1;
@@ -44,9 +44,9 @@ function initialLastIndex(
 }
 
 /**
- * Contiguous episode window with a below-the-fold lookahead buffer.
- * Next episodes are mounted into already-estimated space *before* the sentinel
- * reaches the viewport, so appends happen off-screen (no CLS).
+ * Contiguous episode window. Window scroll is the source of truth so loading
+ * continues for as long as the user keeps scrolling. IntersectionObserver is a
+ * secondary trigger only (it does not re-fire while still intersecting).
  */
 export function useComicFeed(
   pages: Page[],
@@ -58,6 +58,8 @@ export function useComicFeed(
   const lastIndex = ref(0);
   let observer: IntersectionObserver | null = null;
   let expanding = false;
+  let pendingLookahead = false;
+  let scrollTick = false;
 
   function resetTo(page: string) {
     const start = resolvePageIndex(pages, page);
@@ -67,48 +69,69 @@ export function useComicFeed(
 
   resetTo(pageQuery.value);
 
-  const visibleIndices = computed(() => {
-    const indices: number[] = [];
+  const visiblePages = computed(() => {
+    const rows: { index: number; page: Page }[] = [];
     for (let i = startIndex.value; i <= lastIndex.value; i += 1) {
-      if (pages[i]) indices.push(i);
+      const page = pages[i];
+      if (page) rows.push({ index: i, page });
     }
-    return indices;
+    return rows;
   });
-
-  const visiblePages = computed(() =>
-    visibleIndices.value.flatMap((index) => {
-      const page = pages[index];
-      return page ? [{ index, page }] : [];
-    }),
-  );
 
   const hasPrevious = computed(() => startIndex.value > 0);
   const hasMore = computed(() => lastIndex.value < pages.length - 1);
 
-  function sentinelNeedsMore(): boolean {
+  function distanceToSentinel(): number | null {
     const el = sentinel.value;
-    if (!el || !hasMore.value) return false;
-    return el.getBoundingClientRect().top < window.innerHeight + targetBelowFoldPx();
+    if (el) return el.getBoundingClientRect().top - window.innerHeight;
+    const scrolling = document.scrollingElement;
+    if (!scrolling) return null;
+    return scrolling.scrollHeight - scrolling.scrollTop - window.innerHeight;
+  }
+
+  function shouldLoadMore(): boolean {
+    if (!hasMore.value) return false;
+    const distance = distanceToSentinel();
+    if (distance != null && distance < loadAheadPx()) return true;
+    const scrolling = document.scrollingElement;
+    if (!scrolling) return false;
+    return scrolling.scrollHeight - scrolling.scrollTop - window.innerHeight < 320;
   }
 
   async function ensureLookahead() {
-    if (expanding || pages.length === 0) return;
+    if (pages.length === 0) return;
+    if (expanding) {
+      pendingLookahead = true;
+      return;
+    }
     expanding = true;
+    pendingLookahead = false;
     try {
       let appended = 0;
-      while (hasMore.value && sentinelNeedsMore() && appended < MAX_APPEND_PER_TICK) {
+      while (shouldLoadMore() && appended < MAX_APPEND_PER_TICK) {
         lastIndex.value += 1;
         appended += 1;
         await nextTick();
       }
+      if (appended > 0) observe();
     } finally {
       expanding = false;
-      if (hasMore.value && sentinelNeedsMore()) {
+      if (pendingLookahead || shouldLoadMore()) {
+        pendingLookahead = false;
         requestAnimationFrame(() => {
           void ensureLookahead();
         });
       }
     }
+  }
+
+  function requestLookahead() {
+    if (scrollTick) return;
+    scrollTick = true;
+    requestAnimationFrame(() => {
+      scrollTick = false;
+      void ensureLookahead();
+    });
   }
 
   function observe() {
@@ -117,14 +140,11 @@ export function useComicFeed(
     if (!el || typeof IntersectionObserver === 'undefined') return;
     observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          void ensureLookahead();
-        }
+        if (entries.some((entry) => entry.isIntersecting)) requestLookahead();
       },
       {
         root: null,
-        // Fire while the sentinel is still about 1.5 viewports below the fold.
-        rootMargin: `0px 0px ${Math.round(BELOW_FOLD_VIEWPORTS * 100)}% 0px`,
+        rootMargin: `0px 0px ${Math.round(LOAD_AHEAD_VIEWPORTS * 100)}% 0px`,
         threshold: 0,
       },
     );
@@ -160,24 +180,30 @@ export function useComicFeed(
     },
   );
 
-  watch(sentinel, () => {
-    observe();
-    void ensureLookahead();
-  }, { flush: 'post' });
-
-  function onResize() {
-    void ensureLookahead();
-  }
+  watch(
+    sentinel,
+    () => {
+      observe();
+      void ensureLookahead();
+    },
+    { flush: 'post' },
+  );
 
   onMounted(() => {
     observe();
     void ensureLookahead();
-    window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('scroll', requestLookahead, { passive: true });
+    document.addEventListener('scroll', requestLookahead, { passive: true, capture: true });
+    window.addEventListener('resize', requestLookahead, { passive: true });
+    window.addEventListener('momoco:feed-check', requestLookahead);
   });
 
   onUnmounted(() => {
     observer?.disconnect();
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('scroll', requestLookahead);
+    document.removeEventListener('scroll', requestLookahead, true);
+    window.removeEventListener('resize', requestLookahead);
+    window.removeEventListener('momoco:feed-check', requestLookahead);
   });
 
   return {

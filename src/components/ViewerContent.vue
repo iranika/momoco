@@ -52,7 +52,7 @@
       </div>
     </article>
 
-    <div v-if="hasMore" ref="sentinelEl" class="feed-sentinel" aria-hidden="true" />
+    <div ref="sentinelEl" class="feed-sentinel" aria-hidden="true" />
 
     <q-dialog v-model="memodal">
       <q-card>
@@ -169,6 +169,7 @@ export default defineComponent({
       const updated = { ...komaAspect.value, [url]: next };
       komaAspect.value = updated;
       writeStoredKomaAspect(updated);
+      void feed.ensureLookahead();
     }
 
     function CreateShareLinkTwitter(num: number | string, title: string) {

@@ -308,6 +308,7 @@ export default defineComponent({
     const threshold = 110;
 
     function onScroll({ position: { top } }: { position: { top: number } }) {
+      window.dispatchEvent(new Event('momoco:feed-check'));
       if (headerVisibilityStore.isForced.value) {
         lastScroll = top;
         accumulatedUp = 0;
