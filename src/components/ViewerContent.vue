@@ -6,13 +6,23 @@
       >
     </div>
     <div v-for="{ index: i, page } in visiblePages" :key="i">
-      <img
+      <div
         v-for="(url, j) in page.ImagesUrl"
         :key="j"
-        :src="url.replace('/ja/', '/ja/webp/').replace('.jpg', '.webp')"
-        class="img4koma"
-        scrollable
-      />
+        class="koma-frame"
+        :style="komaFrameStyle(url)"
+      >
+        <img
+          :src="url.replace('/ja/', '/ja/webp/').replace('.jpg', '.webp')"
+          class="img4koma"
+          width="1408"
+          height="1850"
+          decoding="async"
+          :fetchpriority="i === show[0] && j === 0 ? 'high' : 'low'"
+          alt=""
+          @load="onKomaLoad($event, url)"
+        />
+      </div>
       <div style="display: flex; justify-content: center">
         <TwitterShareButton :link="CreateShareLinkTwitter(page.Index, page.Title)" />
         <!-- NOTE:ブックマーク機能の実装 -->
@@ -82,8 +92,19 @@
   margin: 0 auto 0 auto;
 }
 
-.img4koma {
+/* Reserve space before the WebP decodes. Default matches early 4-koma (1408x1850). */
+.koma-frame {
   width: 100%;
+  aspect-ratio: var(--koma-ar, 1408 / 1850);
+  background-color: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+
+.img4koma {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
 }
 </style>
 
@@ -139,6 +160,40 @@ export default defineComponent({
         return page ? [{ index: i, page }] : [];
       }),
     );
+
+    const KOMA_ASPECT_KEY = 'koma_aspect_ratios';
+
+    function readStoredKomaAspect(): Record<string, string> {
+      try {
+        const raw = window.localStorage.getItem(KOMA_ASPECT_KEY);
+        return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+      } catch {
+        return {};
+      }
+    }
+
+    const komaAspect = ref<Record<string, string>>(readStoredKomaAspect());
+
+    function komaFrameStyle(url: string) {
+      const ar = komaAspect.value[url];
+      return ar ? { '--koma-ar': ar } : undefined;
+    }
+
+    function onKomaLoad(event: Event, url: string) {
+      const img = event.target;
+      if (!(img instanceof HTMLImageElement) || !img.naturalWidth || !img.naturalHeight) {
+        return;
+      }
+      const next = `${img.naturalWidth} / ${img.naturalHeight}`;
+      if (komaAspect.value[url] === next) return;
+      const updated = { ...komaAspect.value, [url]: next };
+      komaAspect.value = updated;
+      try {
+        window.localStorage.setItem(KOMA_ASPECT_KEY, JSON.stringify(updated));
+      } catch {
+        // Ignore quota / private-mode failures; in-memory ratios still apply.
+      }
+    }
 
     function addContent(addnum = 1) {
       if (pages.length - 1 > Math.max.apply(null, show.value)) {
@@ -209,6 +264,8 @@ export default defineComponent({
       pages,
       show,
       visiblePages,
+      komaFrameStyle,
+      onKomaLoad,
       addContent,
       beforeContent,
       scrolled,

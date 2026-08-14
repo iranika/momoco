@@ -18,6 +18,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
     <link rel="icon" type="image/ico" href="favicon.ico" />
     <script src="https://mo4koma.iranika.info/4komaData.js"></script>
+    <script>
+      (function () {
+        var page = window.pageData && window.pageData[0];
+        var url = page && page.ImagesUrl && page.ImagesUrl[0];
+        if (!url) return;
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.type = 'image/webp';
+        link.href = url.replace('/ja/', '/ja/webp/').replace('.jpg', '.webp');
+        document.head.appendChild(link);
+      })();
+    </script>
     <script src="https://iranika.github.io/mo-yoyaku/goyoyaku.js"></script>
     <script type="text/javascript">
       (function (c, l, a, r, i, t, y) {
