@@ -1,51 +1,47 @@
 <template>
   <q-layout view="lHr lpR lfr">
-    <transition name="header-slide">
-      <q-header
-        v-show="showHeader.value"
-        reveal
-        elevated
-        :reveal-offset="2"
-        class="bg-primary text-white"
-      >
-        <div class="bg-header">
-          <q-toolbar>
-            <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-            <q-space />
-            <!-- Bookmark menu -->
-            <q-btn dense flat round icon="book">
-              <q-menu>
-                <q-list padding>
-                  <q-item-label header>しおり</q-item-label>
-                  <q-item
-                    class="text-black"
-                    v-for="val in bookmarkStore.bookmarks.value.sort(
-                      (a, b) => Number(a) - Number(b),
-                    )"
-                    :key="val"
-                    :to="getPageUrl(Number(val))"
-                  >
-                    <q-item-section>第{{ val }}話</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
-            <!-- LeftDrawer Button -->
-            <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer" />
-          </q-toolbar>
-          <q-toolbar inset>
-            <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
-          </q-toolbar>
-          <q-toolbar inset>
-            <q-tabs>
-              <q-route-tab to="/" label="Home" exact />
-              <q-route-tab to="/?page=latest" label="Latest" exact />
-              <q-route-tab to="/character" label="Character" exact />
-            </q-tabs>
-          </q-toolbar>
-        </div>
-      </q-header>
-    </transition>
+    <q-header
+      :model-value="headerOccupiesSpace"
+      elevated
+      :height-hint="150"
+      class="bg-primary text-white"
+      :class="{ 'header-away': !showHeader.value }"
+    >
+      <div class="bg-header">
+        <q-toolbar>
+          <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+          <q-space />
+          <!-- Bookmark menu -->
+          <q-btn dense flat round icon="book">
+            <q-menu>
+              <q-list padding>
+                <q-item-label header>しおり</q-item-label>
+                <q-item
+                  class="text-black"
+                  v-for="val in bookmarkStore.bookmarks.value.sort((a, b) => Number(a) - Number(b))"
+                  :key="val"
+                  :to="getPageUrl(Number(val))"
+                >
+                  <q-item-section>第{{ val }}話</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <!-- LeftDrawer Button -->
+          <q-btn dense flat round icon="more_vert" @click="toggleRightDrawer" />
+        </q-toolbar>
+        <q-toolbar inset>
+          <q-toolbar-title style="margin-left: 1em">みちくさびゅあー</q-toolbar-title>
+        </q-toolbar>
+        <q-toolbar inset>
+          <q-tabs>
+            <q-route-tab to="/" label="Home" exact />
+            <q-route-tab to="/?page=latest" label="Latest" exact />
+            <q-route-tab to="/character" label="Character" exact />
+          </q-tabs>
+        </q-toolbar>
+      </div>
+    </q-header>
 
     <!-- Left Drawer -->
     <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered behavior="mobile">
@@ -142,16 +138,18 @@
 <style scoped>
 .bg-header {
   background: v-bind(backimg);
+  min-height: 150px;
   /*background: linear-gradient(to top right, rgba(12, 121, 189, 0.8), rgba(14, 160, 106, 0.2)), url("https://mo4koma.iranika.info/top/top.webp") center center / cover no-repeat; */
 }
 
-.header-slide-enter-active,
-.header-slide-leave-active {
-  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+.q-header {
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.header-slide-enter-from,
-.header-slide-leave-to {
-  opacity: 0;
+
+/* Hide on scroll with transform only so q-page-container padding does not change (CLS). */
+.q-header.header-away {
+  transform: translateY(-110%);
+  pointer-events: none;
 }
 </style>
 
@@ -302,11 +300,15 @@ export default defineComponent({
 
     const headerVisibilityStore = useHeaderVisibilityStore();
     const showHeader = headerVisibilityStore.showHeader;
+    const headerOccupiesSpace = computed(
+      () => showHeader.value || !headerVisibilityStore.isForced.value,
+    );
     let lastScroll = 0;
     let accumulatedUp = 0;
     const threshold = 110;
 
     function onScroll({ position: { top } }: { position: { top: number } }) {
+      window.dispatchEvent(new Event('momoco:feed-check'));
       if (headerVisibilityStore.isForced.value) {
         lastScroll = top;
         accumulatedUp = 0;
@@ -331,6 +333,7 @@ export default defineComponent({
       extLinkList,
       onScroll,
       showHeader,
+      headerOccupiesSpace,
       linksList,
       nikaLinkList,
       getPageUrl,

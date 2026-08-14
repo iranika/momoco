@@ -17,7 +17,33 @@
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
     <link rel="icon" type="image/ico" href="favicon.ico" />
+    <style>
+      /* Reserve the SPA shell before Vue mounts so late widgets do not sit at y=0. */
+      html,
+      body {
+        margin: 0;
+      }
+      #q-app {
+        min-height: 100vh;
+      }
+      .dlsite-blogparts {
+        min-height: 280px;
+      }
+    </style>
     <script src="https://mo4koma.iranika.info/4komaData.js"></script>
+    <script>
+      (function () {
+        var page = window.pageData && window.pageData[0];
+        var url = page && page.ImagesUrl && page.ImagesUrl[0];
+        if (!url) return;
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.type = 'image/webp';
+        link.href = url.replace('/ja/', '/ja/webp/').replace('.jpg', '.webp');
+        document.head.appendChild(link);
+      })();
+    </script>
     <script src="https://iranika.github.io/mo-yoyaku/goyoyaku.js"></script>
     <script type="text/javascript">
       (function (c, l, a, r, i, t, y) {
@@ -37,7 +63,8 @@
   <body>
     <!-- quasar:entry-point -->
 
-    <!-- DLsite Blog parts -->
+    <!-- DLsite Blog parts: reserved height so the widget does not shove the page -->
+    <div class="dlsite-blogparts">
     <script type="text/javascript">
       blogparts = { id: '8585', ssl: '1' };
     </script>
@@ -46,6 +73,7 @@
       src="https://www.dlsite.com/js/blogparts.js"
       charset="UTF-8"
     ></script>
+    </div>
     <script type="text/javascript">
       window.NREUM || (NREUM = {});
       NREUM.init = {

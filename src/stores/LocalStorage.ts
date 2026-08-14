@@ -193,3 +193,44 @@ export class BookmarkStore {
 export function useBookmarkStore() {
   return BookmarkStore.getInstance();
 }
+
+const AUTOLOAD_KEY = 'comic_autoload';
+
+export class AutoLoadStore {
+  public static instance: AutoLoadStore;
+
+  public enabled = reactive({
+    value: window.localStorage.getItem(AUTOLOAD_KEY) !== '0',
+  });
+
+  public toggle() {
+    this.enabled.value = !this.enabled.value;
+    window.localStorage.setItem(AUTOLOAD_KEY, this.enabled.value ? '1' : '0');
+  }
+
+  public static getInstance(): AutoLoadStore {
+    if (!this.instance) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this.instance = new AutoLoadStore(AutoLoadStore.getInstance);
+    }
+    return this.instance;
+  }
+
+  constructor(caller: () => AutoLoadStore) {
+    if (caller == AutoLoadStore.getInstance) {
+      console.info('create instance of AutoLoadStore');
+    } else if (AutoLoadStore.instance) {
+      throw new Error(
+        'Already created instance of AutoLoadStore. You should use AutoLoadStore.getInstance().',
+      );
+    } else {
+      throw new Error(
+        'Constractor args valided illegal. You should use AutoLoadStore.getInstance()',
+      );
+    }
+  }
+}
+
+export function useAutoLoadStore() {
+  return AutoLoadStore.getInstance();
+}

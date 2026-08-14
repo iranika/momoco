@@ -1,11 +1,13 @@
 <template>
-  <q-footer class="footer">
+  <q-footer class="footer" :height-hint="200">
     <q-card flat>
       <q-card-section>
         <p>
           漫画は桃鳥さんが描いています。<br />
           画像等の著作権は桃鳥さんにあり、アプリの著作権はいらにかにあります。<br />
-          アプリに関するお問い合わせは<a href="https://twitter.com/happy_packet">いらにか(twitter)</a>までお願いします。
+          アプリに関するお問い合わせは<a href="https://twitter.com/happy_packet"
+            >いらにか(twitter)</a
+          >までお願いします。
         </p>
         <p>
           もしこのアプリを気に入って支援したい人がいたら<a
@@ -21,16 +23,17 @@
 </template>
 
 <style scoped>
-.footer{
+.footer {
   background-color: rgb(238, 238, 238);
   color: black;
   text-align: center;
+  min-height: 200px;
 }
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'AppFooter',
-})
+});
 </script>

@@ -1,8 +1,17 @@
 // app global css in SCSS form
 
+body {
+  font-family:
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', YuGothic, Meiryo,
+    sans-serif;
+}
 
 .bg {
-    background-image: url("../assets/bg.jpg");
-    background-repeat: repeat;
-    background-size: 100%;
+  background-image: url('../assets/bg.jpg');
+  background-repeat: repeat;
+  background-size: 100%;
+}
+
+.dlsite-blogparts {
+  min-height: 280px;
 }

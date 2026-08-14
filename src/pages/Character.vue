@@ -39,11 +39,7 @@
                 <q-card class="text-left">
                   <q-card-section> クリックすると作品ページに飛べます </q-card-section>
                   <q-card-section>
-                    <div
-                      v-for="content in c.contents"
-                      :key="content"
-                      style="margin-bottom: 4px"
-                    >
+                    <div v-for="content in c.contents" :key="content" style="margin-bottom: 4px">
                       <div v-html="content"></div>
                     </div>
                   </q-card-section>
@@ -58,10 +54,7 @@
                   </q-card-section>
                   <q-card-section>
                     <div style="mergin-bottom: 10px">サブ出演</div>
-                    <div
-                      v-for="subProd in getProductsBanner(c.cvArray, 'subAct')"
-                      :key="subProd"
-                    >
+                    <div v-for="subProd in getProductsBanner(c.cvArray, 'subAct')" :key="subProd">
                       <div v-html="subProd" class="panel"></div>
                     </div>
                   </q-card-section>
@@ -82,7 +75,10 @@
   max-width: 700px;
 }
 .panel a img {
+  display: block;
   width: 100%;
+  height: auto;
+  aspect-ratio: 300 / 142;
 }
 </style>
 
