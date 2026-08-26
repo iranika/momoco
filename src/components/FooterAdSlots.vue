@@ -2,7 +2,7 @@
   <div class="footer-ads">
     <div class="footer-ads__notice">
       <q-badge color="orange-8" text-color="white" label="MOCK" />
-      <span>フッター広告枠のモックです。DLsite / 出品の本番配信は未接続です。</span>
+      <span>広告枠モック（本番未接続）</span>
     </div>
 
     <q-tabs
@@ -21,23 +21,19 @@
 
     <div class="footer-ads__grid" :class="{ 'footer-ads__grid--stacked': isNarrow }">
       <section v-show="!isNarrow || activeTab === 'dlsite'" class="ad-frame" aria-label="DLsite選出作品">
-        <header class="ad-frame__head">
-          <div class="ad-frame__label">DLsite 選出作品</div>
-          <div class="ad-frame__sub">道草屋まわりからピックアップした作品枠（ダミー）</div>
-        </header>
+        <div class="ad-frame__label">DLsite 選出</div>
         <div class="work-list">
           <a
             v-for="work in dlsiteWorks"
             :key="work.id"
             class="work-card"
             :href="work.href"
-            :title="work.title"
+            :title="`${work.title} ${work.price}`"
           >
             <div class="work-card__cover" :style="{ background: work.coverTone }">
-              <span>{{ work.coverLabel }}</span>
+              {{ work.coverLabel }}
             </div>
             <div class="work-card__body">
-              <div class="work-card__maker">{{ work.maker }}</div>
               <div class="work-card__title">{{ work.title }}</div>
               <div class="work-card__price">{{ work.price }}</div>
             </div>
@@ -46,10 +42,7 @@
       </section>
 
       <section v-show="!isNarrow || activeTab === 'listing'" class="ad-frame" aria-label="出品・広告枠">
-        <header class="ad-frame__head">
-          <div class="ad-frame__label">出品・広告枠</div>
-          <div class="ad-frame__sub">広告を出したい方向けの掲載スロット（ダミー）</div>
-        </header>
+        <div class="ad-frame__label">出品枠</div>
         <div class="listing-list">
           <article
             v-for="slot in listingSlots"
@@ -58,23 +51,21 @@
             :class="{ 'listing-slot--vacant': slot.vacant }"
           >
             <template v-if="!slot.vacant">
-              <a class="listing-slot__link" :href="slot.href" target="_blank" rel="noopener noreferrer">
-                <div class="listing-slot__kicker">掲載中</div>
-                <div class="listing-slot__title">{{ slot.title }}</div>
-                <div class="listing-slot__meta">{{ slot.advertiser }}</div>
-                <div class="listing-slot__note">{{ slot.note }}</div>
+              <a class="listing-slot__row" :href="slot.href" target="_blank" rel="noopener noreferrer">
+                <span class="listing-slot__kicker">掲載中</span>
+                <span class="listing-slot__title">{{ slot.title }}</span>
               </a>
             </template>
             <template v-else>
-              <div class="listing-slot__vacant-body">
-                <div class="listing-slot__kicker">空き枠</div>
-                <div class="listing-slot__title">あなたの作品・告知をここに</div>
-                <div class="listing-slot__note">{{ slot.note }}</div>
+              <div class="listing-slot__row">
+                <span class="listing-slot__kicker">空き枠</span>
+                <span class="listing-slot__title">広告募集</span>
                 <q-btn
                   unelevated
                   color="primary"
-                  size="sm"
-                  label="出品について（モック）"
+                  size="xs"
+                  dense
+                  label="出品（モック）"
                   @click="guideOpen = true"
                 />
               </div>
@@ -135,26 +126,26 @@ const listingSlots = MOCK_LISTING_SLOTS;
 .footer-ads {
   text-align: left;
   max-width: 960px;
-  margin: 0 auto 12px;
+  margin: 0 auto 6px;
 }
 
 .footer-ads__notice {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 11px;
   color: #555;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .footer-ads__tabs {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .footer-ads__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 8px;
 }
 
 .footer-ads__grid--stacked {
@@ -164,105 +155,98 @@ const listingSlots = MOCK_LISTING_SLOTS;
 .ad-frame {
   background: #fff;
   border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  padding: 10px;
-  min-height: 168px;
-}
-
-.ad-frame__head {
-  margin-bottom: 8px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 0;
 }
 
 .ad-frame__label {
-  font-size: 13px;
+  flex: 0 0 auto;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.02em;
-}
-
-.ad-frame__sub {
-  font-size: 11px;
-  color: #666;
+  white-space: nowrap;
 }
 
 .work-list {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  min-width: 0;
+  flex: 1;
 }
 
 .work-card {
-  flex: 0 0 92px;
-  width: 92px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 92px;
   color: inherit;
   text-decoration: none;
 }
 
 .work-card__cover {
-  width: 92px;
-  height: 92px;
-  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
 .work-card__body {
-  margin-top: 4px;
-}
-
-.work-card__maker {
-  font-size: 10px;
-  color: #888;
+  min-width: 0;
 }
 
 .work-card__title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.2;
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .work-card__price {
-  font-size: 11px;
+  font-size: 10px;
   color: #c45c22;
   font-weight: 700;
 }
 
 .listing-list {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
 }
 
 .listing-slot {
+  flex: 1 1 0;
+  min-width: 0;
   border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 4px;
   background: #fafafa;
-  min-height: 72px;
 }
 
 .listing-slot--vacant {
   border-style: dashed;
-  background: repeating-linear-gradient(
-    -45deg,
-    #fff,
-    #fff 6px,
-    #f3f3f3 6px,
-    #f3f3f3 12px
-  );
+  background: #fff;
 }
 
-.listing-slot__link,
-.listing-slot__vacant-body {
-  display: block;
-  padding: 8px 10px;
+.listing-slot__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  min-height: 36px;
   color: inherit;
   text-decoration: none;
 }
@@ -271,6 +255,7 @@ const listingSlots = MOCK_LISTING_SLOTS;
   font-size: 10px;
   color: #1976d2;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .listing-slot--vacant .listing-slot__kicker {
@@ -278,18 +263,12 @@ const listingSlots = MOCK_LISTING_SLOTS;
 }
 
 .listing-slot__title {
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.listing-slot__meta {
   font-size: 11px;
-  color: #666;
-}
-
-.listing-slot__note {
-  font-size: 11px;
-  color: #777;
-  margin: 2px 0 6px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
 }
 </style>

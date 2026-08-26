@@ -31,13 +31,13 @@
 }
 
 .footer__inner {
-  max-height: min(42vh, 420px);
-  overflow-y: auto;
+  padding: 8px 12px 10px;
 }
 
 .footer__inner p {
-  margin: 8px 0;
-  font-size: 13px;
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.4;
 }
 </style>
 
@@ -51,7 +51,7 @@ export default defineComponent({
   components: { FooterAdSlots },
   setup() {
     const $q = useQuasar();
-    const footerHint = computed(() => ($q.screen.lt.sm ? 280 : 260));
+    const footerHint = computed(() => ($q.screen.lt.sm ? 200 : 188));
     return { footerHint };
   },
 });
