@@ -130,8 +130,8 @@
     <q-page-container>
       <q-scroll-observer @scroll="onScroll" />
       <router-view />
+      <AppFooter />
     </q-page-container>
-    <AppFooter />
   </q-layout>
 </template>
 
