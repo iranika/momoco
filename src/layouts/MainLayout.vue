@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHr lpR lFr">
+  <q-layout view="lHr lpR lfr">
     <q-header
       :model-value="headerOccupiesSpace"
       elevated
@@ -130,8 +130,8 @@
     <q-page-container>
       <q-scroll-observer @scroll="onScroll" />
       <router-view />
+      <AppFooter />
     </q-page-container>
-    <AppFooter />
   </q-layout>
 </template>
 

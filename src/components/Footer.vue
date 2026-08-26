@@ -1,5 +1,5 @@
 <template>
-  <q-footer class="footer" bordered :height-hint="footerHint">
+  <footer class="footer">
     <q-card flat>
       <q-card-section class="footer__inner">
         <FooterAdSlots />
@@ -20,7 +20,7 @@
         <div class="">みちくさびゅーあー ©2019 iranika(@happy_packet)</div>
       </q-card-section>
     </q-card>
-  </q-footer>
+  </footer>
 </template>
 
 <style scoped>
@@ -28,6 +28,8 @@
   background-color: rgb(238, 238, 238);
   color: black;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .footer__inner {
@@ -42,17 +44,11 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { useQuasar } from 'quasar';
+import { defineComponent } from 'vue';
 import FooterAdSlots from 'components/FooterAdSlots.vue';
 
 export default defineComponent({
   name: 'AppFooter',
   components: { FooterAdSlots },
-  setup() {
-    const $q = useQuasar();
-    const footerHint = computed(() => ($q.screen.lt.sm ? 200 : 188));
-    return { footerHint };
-  },
 });
 </script>
