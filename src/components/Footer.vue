@@ -1,7 +1,8 @@
 <template>
-  <q-footer class="footer" :height-hint="200">
+  <q-footer class="footer" :height-hint="footerHint">
     <q-card flat>
       <q-card-section>
+        <FooterAdSlots />
         <p>
           漫画は桃鳥さんが描いています。<br />
           画像等の著作権は桃鳥さんにあり、アプリの著作権はいらにかにあります。<br />
@@ -32,8 +33,17 @@
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
+import { useQuasar } from 'quasar';
+import FooterAdSlots from 'components/FooterAdSlots.vue';
+
 export default defineComponent({
   name: 'AppFooter',
+  components: { FooterAdSlots },
+  setup() {
+    const $q = useQuasar();
+    const footerHint = computed(() => ($q.screen.lt.sm ? 520 : 430));
+    return { footerHint };
+  },
 });
 </script>
