@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHr lpR lfr">
+  <q-layout view="lHr lpR lFr">
     <q-header
       :model-value="headerOccupiesSpace"
       elevated

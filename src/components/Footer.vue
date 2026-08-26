@@ -1,7 +1,7 @@
 <template>
-  <q-footer class="footer" :height-hint="footerHint">
+  <q-footer class="footer" bordered :height-hint="footerHint">
     <q-card flat>
-      <q-card-section>
+      <q-card-section class="footer__inner">
         <FooterAdSlots />
         <p>
           漫画は桃鳥さんが描いています。<br />
@@ -28,7 +28,16 @@
   background-color: rgb(238, 238, 238);
   color: black;
   text-align: center;
-  min-height: 200px;
+}
+
+.footer__inner {
+  max-height: min(42vh, 420px);
+  overflow-y: auto;
+}
+
+.footer__inner p {
+  margin: 8px 0;
+  font-size: 13px;
 }
 </style>
 
@@ -42,7 +51,7 @@ export default defineComponent({
   components: { FooterAdSlots },
   setup() {
     const $q = useQuasar();
-    const footerHint = computed(() => ($q.screen.lt.sm ? 520 : 430));
+    const footerHint = computed(() => ($q.screen.lt.sm ? 280 : 260));
     return { footerHint };
   },
 });
