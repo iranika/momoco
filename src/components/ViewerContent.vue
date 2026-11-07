@@ -28,22 +28,22 @@
       <div class="episode-actions">
         <TwitterShareButton :link="CreateShareLinkTwitter(page.Index, page.Title)" />
         <q-btn
-          :color="bookmarkStore.isIncludeBookmark(page.Index) ? 'grey' : 'green'"
+          :color="bookmarkStore.has(page.Index) ? 'grey' : 'green'"
           class="text-white"
           rounded
           size="xs"
-          @click="bookmarkStore.clickBookmark(page.Index)"
+          @click="bookmarkStore.toggle(page.Index)"
         >
           <q-icon name="book" />しおり
         </q-btn>
         <q-btn
-          v-if="db.memos[i]"
+          v-if="memoStore.memos[i]"
           color="orange"
           class="text-white"
           rounded
           size="xs"
           @click="
-            memo = db.memos[i];
+            memo = memoStore.memos[i];
             memodal = !memodal;
           "
         >
@@ -117,7 +117,7 @@
 <script lang="ts">
 import { defineComponent, ref, toRef } from 'vue';
 import TwitterShareButton from 'components/TwitterShareButton.vue';
-import useMemoStore from 'src/stores/MemoStore';
+import { useMemoStore } from 'src/stores/MemoStore';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
 import { useComicFeed } from 'src/composables/useComicFeed';
 import {
@@ -144,7 +144,7 @@ export default defineComponent({
   setup(props) {
     const memodal = ref(false);
     const memo = ref('');
-    const db = useMemoStore().db;
+    const memoStore = useMemoStore();
     const bookmarkStore = useBookmarkStore();
     const sentinelEl = ref<HTMLElement | null>(null);
 
@@ -180,7 +180,7 @@ export default defineComponent({
     return {
       memodal,
       memo,
-      db,
+      memoStore,
       sentinelEl,
       startIndex: feed.startIndex,
       visiblePages: feed.visiblePages,

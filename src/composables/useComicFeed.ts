@@ -72,7 +72,7 @@ export function useComicFeed(
       pages,
       start,
       aspectByUrl.value,
-      autoLoadStore.enabled.value,
+      autoLoadStore.enabled,
     );
   }
 
@@ -99,7 +99,7 @@ export function useComicFeed(
   }
 
   function shouldLoadMore(): boolean {
-    if (!autoLoadStore.enabled.value || !hasMore.value) return false;
+    if (!autoLoadStore.enabled || !hasMore.value) return false;
     const distance = distanceToSentinel();
     if (distance != null && distance < loadAheadPx()) return true;
     const scrolling = document.scrollingElement;
@@ -175,11 +175,11 @@ export function useComicFeed(
     if (!hasMore.value) return;
     lastIndex.value += 1;
     await nextTick();
-    if (autoLoadStore.enabled.value) void ensureLookahead();
+    if (autoLoadStore.enabled) void ensureLookahead();
   }
 
   watch(
-    () => autoLoadStore.enabled.value,
+    () => autoLoadStore.enabled,
     (enabled) => {
       if (enabled) void ensureLookahead();
     },

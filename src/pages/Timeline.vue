@@ -2,7 +2,7 @@
   <q-page padding>
     <div>
       <q-timeline color="secondary" :layout="layout">
-        <template v-for="(product, i) in db.products" :key="i">
+        <template v-for="(product, i) in productStore.products" :key="i">
           <q-timeline-entry :side="i % 2 == 0 ? 'right' : 'left'">
             <template v-slot:title>
               <div class="text-subtitle1 text-bold">
@@ -29,7 +29,7 @@
             </div>
           </q-timeline-entry>
         </template>
-        <q-timeline-entry v-if="db.products.length != 0">
+        <q-timeline-entry v-if="productStore.products.length != 0">
           <template v-slot:title>
             <div class="text-subtitle1 text-bold">Now waiting -> next...</div>
           </template>
@@ -72,21 +72,21 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import useProductStore from 'src/stores/ProductStore';
+import { useProductStore } from 'src/stores/ProductStore';
 import { useQuasar, date } from 'quasar';
 
 export default defineComponent({
   // name: 'PageName'
 
   setup() {
-    const db = useProductStore().db;
+    const productStore = useProductStore();
     const $q = useQuasar();
     const layout = computed(() => {
       return $q.screen.lt.sm ? 'dense' : $q.screen.lt.md ? 'comfortable' : 'loose';
     });
 
     return {
-      db,
+      productStore,
       layout,
       date,
     };
