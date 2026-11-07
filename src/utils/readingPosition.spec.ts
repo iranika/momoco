@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { readReadingPosition, writeReadingPosition } from './readingPosition';
+import { advanceReadingPosition, readReadingPosition, writeReadingPosition } from './readingPosition';
 
 const backing = new Map<string, string>();
 
@@ -36,5 +36,34 @@ describe('readingPosition', () => {
     expect(readReadingPosition()).toBeNull();
     backing.set('reading_position', '0');
     expect(readReadingPosition()).toBeNull();
+  });
+
+  describe('advanceReadingPosition', () => {
+    it('advances to a higher episode', () => {
+      advanceReadingPosition(10);
+      expect(readReadingPosition()).toBe(10);
+      advanceReadingPosition(13);
+      expect(readReadingPosition()).toBe(13);
+    });
+
+    it('never moves the position backwards', () => {
+      advanceReadingPosition(13);
+      advanceReadingPosition(5);
+      expect(readReadingPosition()).toBe(13);
+    });
+
+    it('ignores invalid values', () => {
+      advanceReadingPosition(7);
+      advanceReadingPosition('abc');
+      advanceReadingPosition(-2);
+      advanceReadingPosition(0);
+      expect(readReadingPosition()).toBe(7);
+    });
+
+    it('recovers from a corrupted stored value', () => {
+      backing.set('reading_position', 'abc');
+      advanceReadingPosition(4);
+      expect(readReadingPosition()).toBe(4);
+    });
   });
 });

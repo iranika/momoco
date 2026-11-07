@@ -19,3 +19,15 @@ export function writeReadingPosition(index: number | string): void {
     // Ignore quota / private-mode failures; reading position is best-effort.
   }
 }
+
+/**
+ * Record reading progress without ever moving it backwards, so opening an
+ * older episode via ?page=N does not rewind the resume position.
+ */
+export function advanceReadingPosition(index: number | string): void {
+  const value = Number(index);
+  if (!Number.isInteger(value) || value <= 0) return;
+  const current = readReadingPosition();
+  if (current != null && current >= value) return;
+  writeReadingPosition(value);
+}
