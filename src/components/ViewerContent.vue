@@ -115,7 +115,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, toRef } from 'vue';
+import { defineComponent, ref, toRef, watch } from 'vue';
 import TwitterShareButton from 'components/TwitterShareButton.vue';
 import { useMemoStore } from 'src/stores/MemoStore';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
@@ -125,6 +125,7 @@ import {
   readStoredKomaAspect,
   writeStoredKomaAspect,
 } from 'src/utils/komaAspect';
+import { writeReadingPosition } from 'src/utils/readingPosition';
 
 export default defineComponent({
   components: {
@@ -153,6 +154,12 @@ export default defineComponent({
     const pageQuery = toRef(props, 'page');
 
     const feed = useComicFeed(pages, pageQuery, komaAspect, sentinelEl);
+
+    // 読み進めた位置を保存し、次回ホームを開いたときに再開できるようにする
+    watch(feed.lastIndex, (last) => {
+      const page = pages[last];
+      if (page && page.Index != null) writeReadingPosition(page.Index);
+    });
 
     function komaFrameStyle(url: string) {
       const ar = komaAspect.value[url];
