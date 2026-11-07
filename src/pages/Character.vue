@@ -84,7 +84,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import useProductStore from 'src/stores/ProductStore';
+import { useProductStore } from 'src/stores/ProductStore';
 
 const chara = [
   {
@@ -191,18 +191,13 @@ export default defineComponent({
   props: {
     name: String,
   },
-  data() {
-    return {
-      db: useProductStore().db,
-    };
-  },
   computed: {},
   setup() {
-    const db = useProductStore().db;
+    const productStore = useProductStore();
 
     const getProductsBanner = computed(() => {
       return function (cvArray: Array<string>, prodType = 'mainAct') {
-        const charaProdcts = db.products.filter((v) =>
+        const charaProdcts = productStore.products.filter((v) =>
           cvArray.some((cv) =>
             prodType == 'mainAct' ? v.mainAct.includes(cv) : v.subAct.includes(cv),
           ),
@@ -214,8 +209,6 @@ export default defineComponent({
     return {
       getProductsBanner,
       chara,
-      // eslint-disable-next-line vue/no-dupe-keys
-      db,
     };
   },
 });

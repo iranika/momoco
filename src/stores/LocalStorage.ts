@@ -1,236 +1,129 @@
-/*
- */
-
 import axios from 'axios';
-import { reactive } from 'vue';
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
 interface ArchivesJson {
   archivesUrl: string;
   files: string[];
 }
 
-export class HeaderImgStore {
-  public static instance: HeaderImgStore;
-
-  public archives = reactive({
-    value: {
-      archivesUrl: '',
-      files: [] as string[],
-    },
-  });
-
-  public current = reactive({
-    value: '',
-  });
-
-  public getCurrent(top = 'https://mo4koma.iranika.info/top/top.webp') {
-    this.current.value = window.localStorage.getItem('header_img') ?? top;
-    return this.current.value;
-  }
-  public getFullpath(file: string) {
-    return `${this.archives.value.archivesUrl}/${file}`;
-  }
-
-  public setCurrent(url: string) {
-    window.localStorage.setItem('header_img', url);
-    this.current.value = url;
-    //console.log('DEBUG: setCurrent',this.current.value);
-  }
-
-  public initCurrent() {
-    window.localStorage.removeItem('header_img');
-    this.getCurrent();
-  }
-
-  public syncImageList(jsonUrl = 'https://mo4koma.iranika.info/top/archives.json') {
-    //TODO:画像リストを取得する
-    void axios.get(jsonUrl).then((res) => {
-      this.archives.value = <ArchivesJson>res.data;
-    });
-  }
-
-  public static getInstance(): HeaderImgStore {
-    if (!this.instance) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.instance = new HeaderImgStore(HeaderImgStore.getInstance);
-    }
-    return this.instance;
-  }
-  constructor(caller: () => HeaderImgStore) {
-    if (caller == HeaderImgStore.getInstance) {
-      console.info('create instance of HeaderImgStore');
-      this.syncImageList();
-      this.getCurrent();
-    } else if (HeaderImgStore.instance) {
-      throw new Error(
-        'Already created instance of HeaderImgStore. You should use HeaderImgStore.getInstance().',
-      );
-    } else {
-      throw new Error(
-        'Constractor args valided illegal. You should use HeaderImgStore.getInstance()',
-      );
-    }
-  }
-}
-export function useHeaderImgStore() {
-  return HeaderImgStore.getInstance();
-}
-
-export class HeaderVisibilityStore {
-  public static instance: HeaderVisibilityStore;
-
-  public showHeader = reactive({
-    value: true,
-  });
-  public isForced = reactive({
-    value: false,
-  });
-
-  public setVisible(visible: boolean) {
-    this.showHeader.value = visible;
-  }
-
-  public toggle() {
-    this.showHeader.value = !this.showHeader.value;
-  }
-
-  public forceToggle() {
-    this.isForced.value = true;
-    this.showHeader.value = !this.showHeader.value;
-  }
-
-  public releaseForce() {
-    this.isForced.value = false;
-  }
-
-  public static getInstance(): HeaderVisibilityStore {
-    if (!this.instance) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.instance = new HeaderVisibilityStore(HeaderVisibilityStore.getInstance);
-    }
-    return this.instance;
-  }
-
-  constructor(caller: () => HeaderVisibilityStore) {
-    if (caller == HeaderVisibilityStore.getInstance) {
-      console.info('create instance of HeaderVisibilityStore');
-    } else if (HeaderVisibilityStore.instance) {
-      throw new Error(
-        'Already created instance of HeaderVisibilityStore. You should use HeaderVisibilityStore.getInstance().',
-      );
-    } else {
-      throw new Error(
-        'Constractor args valided illegal. You should use HeaderVisibilityStore.getInstance()',
-      );
-    }
-  }
-}
-
-export function useHeaderVisibilityStore() {
-  return HeaderVisibilityStore.getInstance();
-}
-
-export class BookmarkStore {
-  public static instance: BookmarkStore;
-
-  public bookmarks = reactive({
-    value: this.getBookmark(),
-  });
-
-  private getBookmark() {
-    const bookmarks = window.localStorage.getItem('bookmarks') ?? '';
-    return bookmarks != '' ? bookmarks.split(',') : [];
-  }
-  public addBookmark(p: number | string) {
-    if (!this.bookmarks.value.includes(String(p))) {
-      this.bookmarks.value.push(String(p));
-    }
-    this.setBookmark();
-  }
-  public removeBookmark(p: number | string) {
-    const index = this.bookmarks.value.indexOf(String(p));
-    if (index != -1) {
-      this.bookmarks.value.splice(index, 1);
-    }
-    this.setBookmark();
-  }
-  private setBookmark() {
-    console.log('setBookmark', this.bookmarks.value);
-    window.localStorage.setItem('bookmarks', this.bookmarks.value.join(','));
-  }
-  public isIncludeBookmark(p: number | string) {
-    return this.bookmarks.value.includes(String(p));
-  }
-  public clickBookmark(p: number | string) {
-    if (this.bookmarks.value.includes(String(p))) {
-      this.removeBookmark(p);
-    } else {
-      this.addBookmark(p);
-    }
-  }
-  public static getInstance(): BookmarkStore {
-    if (!this.instance) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.instance = new BookmarkStore(BookmarkStore.getInstance);
-    }
-    return this.instance;
-  }
-  constructor(caller: () => BookmarkStore) {
-    if (caller == BookmarkStore.getInstance) {
-      console.info('create instance of BookmarkStore');
-    } else if (BookmarkStore.instance) {
-      throw new Error(
-        'Already created instance of BookmarkStore. You should use BookmarkStore.getInstance().',
-      );
-    } else {
-      throw new Error(
-        'Constractor args valided illegal. You should use BookmarkStore.getInstance()',
-      );
-    }
-  }
-}
-
-export function useBookmarkStore() {
-  return BookmarkStore.getInstance();
-}
-
+const HEADER_IMG_KEY = 'header_img';
+const BOOKMARKS_KEY = 'bookmarks';
 const AUTOLOAD_KEY = 'comic_autoload';
+const DEFAULT_HEADER_IMG = 'https://mo4koma.iranika.info/top/top.webp';
+const ARCHIVES_JSON_URL = 'https://mo4koma.iranika.info/top/archives.json';
 
-export class AutoLoadStore {
-  public static instance: AutoLoadStore;
+export const useHeaderImgStore = defineStore('headerImg', () => {
+  const archives = ref<ArchivesJson>({ archivesUrl: '', files: [] });
+  const current = ref(DEFAULT_HEADER_IMG);
 
-  public enabled = reactive({
-    value: window.localStorage.getItem(AUTOLOAD_KEY) !== '0',
-  });
-
-  public toggle() {
-    this.enabled.value = !this.enabled.value;
-    window.localStorage.setItem(AUTOLOAD_KEY, this.enabled.value ? '1' : '0');
+  function getFullpath(file: string) {
+    return `${archives.value.archivesUrl}/${file}`;
   }
 
-  public static getInstance(): AutoLoadStore {
-    if (!this.instance) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.instance = new AutoLoadStore(AutoLoadStore.getInstance);
+  function setCurrent(url: string) {
+    window.localStorage.setItem(HEADER_IMG_KEY, url);
+    current.value = url;
+  }
+
+  function resetCurrent() {
+    window.localStorage.removeItem(HEADER_IMG_KEY);
+    current.value = DEFAULT_HEADER_IMG;
+  }
+
+  async function syncImageList(jsonUrl = ARCHIVES_JSON_URL) {
+    try {
+      const res = await axios.get<ArchivesJson>(jsonUrl);
+      archives.value = res.data;
+    } catch {
+      // 画像一覧の取得に失敗してもヘッダー選択画面が空になるだけなので握りつぶす
     }
-    return this.instance;
   }
 
-  constructor(caller: () => AutoLoadStore) {
-    if (caller == AutoLoadStore.getInstance) {
-      console.info('create instance of AutoLoadStore');
-    } else if (AutoLoadStore.instance) {
-      throw new Error(
-        'Already created instance of AutoLoadStore. You should use AutoLoadStore.getInstance().',
-      );
+  current.value = window.localStorage.getItem(HEADER_IMG_KEY) ?? DEFAULT_HEADER_IMG;
+  void syncImageList();
+
+  return { archives, current, getFullpath, setCurrent, resetCurrent, syncImageList };
+});
+
+export const useHeaderVisibilityStore = defineStore('headerVisibility', () => {
+  const showHeader = ref(true);
+  const isForced = ref(false);
+
+  function setVisible(visible: boolean) {
+    showHeader.value = visible;
+  }
+
+  function toggle() {
+    showHeader.value = !showHeader.value;
+  }
+
+  function forceToggle() {
+    isForced.value = true;
+    showHeader.value = !showHeader.value;
+  }
+
+  function releaseForce() {
+    isForced.value = false;
+  }
+
+  return { showHeader, isForced, setVisible, toggle, forceToggle, releaseForce };
+});
+
+export const useBookmarkStore = defineStore('bookmark', () => {
+  const bookmarks = ref<string[]>(readBookmarks());
+
+  function readBookmarks(): string[] {
+    const raw = window.localStorage.getItem(BOOKMARKS_KEY) ?? '';
+    return raw !== '' ? raw.split(',') : [];
+  }
+
+  function persist() {
+    window.localStorage.setItem(BOOKMARKS_KEY, bookmarks.value.join(','));
+  }
+
+  function add(p: number | string) {
+    const key = String(p);
+    if (!bookmarks.value.includes(key)) {
+      bookmarks.value.push(key);
+    }
+    persist();
+  }
+
+  function remove(p: number | string) {
+    const index = bookmarks.value.indexOf(String(p));
+    if (index !== -1) {
+      bookmarks.value.splice(index, 1);
+    }
+    persist();
+  }
+
+  function toggle(p: number | string) {
+    if (bookmarks.value.includes(String(p))) {
+      remove(p);
     } else {
-      throw new Error(
-        'Constractor args valided illegal. You should use AutoLoadStore.getInstance()',
-      );
+      add(p);
     }
   }
-}
 
-export function useAutoLoadStore() {
-  return AutoLoadStore.getInstance();
-}
+  function has(p: number | string) {
+    return bookmarks.value.includes(String(p));
+  }
+
+  const sortedBookmarks = computed(() =>
+    [...bookmarks.value].sort((a, b) => Number(a) - Number(b)),
+  );
+
+  return { bookmarks, sortedBookmarks, add, remove, toggle, has };
+});
+
+export const useAutoLoadStore = defineStore('autoLoad', () => {
+  const enabled = ref(window.localStorage.getItem(AUTOLOAD_KEY) !== '0');
+
+  function toggle() {
+    enabled.value = !enabled.value;
+    window.localStorage.setItem(AUTOLOAD_KEY, enabled.value ? '1' : '0');
+  }
+
+  return { enabled, toggle };
+});

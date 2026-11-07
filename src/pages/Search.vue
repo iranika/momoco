@@ -4,7 +4,7 @@
       title="びゅあー検索㌼"
       :dense="$q.screen.lt.md"
       :grid="$q.screen.xs"
-      :rows="searchStore.products.value"
+      :rows="searchStore.products"
       :columns="columns"
       row-key="No"
       :selected-rows-label="getSelectedString"
@@ -278,7 +278,7 @@ export default defineComponent({
       getSelectedString() {
         return selected.value.length === 0
           ? ''
-          : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${searchStore.products.value.length}`;
+          : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${searchStore.products.length}`;
       },
     };
   },

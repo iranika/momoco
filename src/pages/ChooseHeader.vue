@@ -17,7 +17,7 @@
                     </q-item>
                   </template>
                 </q-select>
-                <q-btn label="ヘッダーをデフォルトに戻す" @click="headerImgStore.initCurrent()"></q-btn>
+                <q-btn label="ヘッダーをデフォルトに戻す" @click="headerImgStore.resetCurrent()"></q-btn>
 
               </div>
             </q-card-section>
@@ -70,9 +70,9 @@ export default defineComponent({
   // name: 'PageName'
   setup() {
     // TODO: メチャクチャなロジックなのでそのうち整理する
-    const options = ref<string[]>(useHeaderImgStore().archives.value.files);
     const headerImgStore = useHeaderImgStore();
-    const current = ref(headerImgStore.current.value.replace('https://mo4koma.iranika.info/top/archives/', ''));
+    const options = ref<string[]>([...headerImgStore.archives.files]);
+    const current = ref(headerImgStore.current.replace('https://mo4koma.iranika.info/top/archives/', ''));
     const page = ref(1);
     const shownum = 8;
     const maxnum = ref(options.value.length % shownum == 0 ? options.value.length / shownum : Math.floor(options.value.length / shownum) + 1);
@@ -85,15 +85,15 @@ export default defineComponent({
       }
     )
     watch(
-      headerImgStore.current,
-      ()=>{
-        current.value = headerImgStore.current.value.replace('https://mo4koma.iranika.info/top/archives/', '')
+      () => headerImgStore.current,
+      () => {
+        current.value = headerImgStore.current.replace('https://mo4koma.iranika.info/top/archives/', '')
       }
     )
     watch(
-      useHeaderImgStore().archives,
+      () => headerImgStore.archives,
       (val) => {
-        options.value = val.value.files
+        options.value = [...val.files]
         maxnum.value = options.value.length % shownum == 0 ? options.value.length / shownum : Math.floor(options.value.length / shownum) + 1
       }
     )
@@ -109,14 +109,14 @@ export default defineComponent({
       searchfilter(val: string, update: (prm: any) => any) {
         if (val === '') {
           update(() => {
-            options.value = headerImgStore.archives.value.files;
+            options.value = [...headerImgStore.archives.files];
           })
           return
         }
 
         update(() => {
           const needle = val.toLowerCase()
-          options.value = headerImgStore.archives.value.files.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          options.value = headerImgStore.archives.files.filter(v => v.toLowerCase().indexOf(needle) > -1)
         })
       }
     }

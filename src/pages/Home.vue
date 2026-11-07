@@ -73,10 +73,10 @@ export default defineComponent({
   },
   computed: {
     headerVisible() {
-      return useHeaderVisibilityStore().showHeader.value;
+      return useHeaderVisibilityStore().showHeader;
     },
     autoLoad() {
-      return useAutoLoadStore().enabled.value;
+      return useAutoLoadStore().enabled;
     },
   },
   methods: {

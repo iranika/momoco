@@ -5,7 +5,7 @@
       elevated
       :height-hint="150"
       class="bg-primary text-white"
-      :class="{ 'header-away': !showHeader.value }"
+      :class="{ 'header-away': !headerVisibilityStore.showHeader }"
     >
       <div class="bg-header">
         <q-toolbar>
@@ -18,7 +18,7 @@
                 <q-item-label header>しおり</q-item-label>
                 <q-item
                   class="text-black"
-                  v-for="val in bookmarkStore.bookmarks.value.sort((a, b) => Number(a) - Number(b))"
+                  v-for="val in bookmarkStore.sortedBookmarks"
                   :key="val"
                   :to="getPageUrl(Number(val))"
                 >
@@ -278,17 +278,6 @@ export default defineComponent({
     const pageData = window.pageData;
     const bookmarkStore = useBookmarkStore();
 
-    function getRightIndex(index: number) {
-      const ZureMin = 3;
-      const ZureMax = 79;
-      if (ZureMin <= index && index < ZureMax) {
-        return index + 2;
-      } else if (index == 79) {
-        return 'ri';
-      } else {
-        return index + 1;
-      }
-    }
     function getPageUrl(index: number | string) {
       return `/?page=${index.toString()}`;
     }
@@ -299,9 +288,9 @@ export default defineComponent({
     }
 
     const headerVisibilityStore = useHeaderVisibilityStore();
-    const showHeader = headerVisibilityStore.showHeader;
+    const headerImgStore = useHeaderImgStore();
     const headerOccupiesSpace = computed(
-      () => showHeader.value || !headerVisibilityStore.isForced.value,
+      () => headerVisibilityStore.showHeader || !headerVisibilityStore.isForced,
     );
     let lastScroll = 0;
     let accumulatedUp = 0;
@@ -309,7 +298,7 @@ export default defineComponent({
 
     function onScroll({ position: { top } }: { position: { top: number } }) {
       window.dispatchEvent(new Event('momoco:feed-check'));
-      if (headerVisibilityStore.isForced.value) {
+      if (headerVisibilityStore.isForced) {
         lastScroll = top;
         accumulatedUp = 0;
         return;
@@ -317,13 +306,13 @@ export default defineComponent({
       const current = top;
       if (current > lastScroll) {
         //scrolling down
-        showHeader.value = false;
+        headerVisibilityStore.showHeader = false;
         accumulatedUp = 0;
       } else {
         //scrolling up
         accumulatedUp += lastScroll - current;
         if (accumulatedUp > threshold) {
-          showHeader.value = true;
+          headerVisibilityStore.showHeader = true;
         }
       }
       lastScroll = current;
@@ -332,12 +321,11 @@ export default defineComponent({
     return {
       extLinkList,
       onScroll,
-      showHeader,
+      headerVisibilityStore,
       headerOccupiesSpace,
       linksList,
       nikaLinkList,
       getPageUrl,
-      getRightIndex,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -352,7 +340,7 @@ export default defineComponent({
       bookmarkStore,
       openURL,
       backimg: computed(() => {
-        return `linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url(${useHeaderImgStore().current.value}) center center / cover no-repeat`;
+        return `linear-gradient(to top right, rgba(194, 174, 1, 0.8), rgba(14, 160, 106, 0.2)), url(${headerImgStore.current}) center center / cover no-repeat`;
       }),
     };
   },
