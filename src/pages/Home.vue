@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="bg">
-    <ViewerContent :page="viewerPage" />
+    <ViewerContent :page="page" />
     <q-page-sticky position="bottom-right" :offset="[18, 110]">
       <q-btn
         size="small"
@@ -56,11 +56,9 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { useRoute } from 'vue-router';
+import { defineComponent } from 'vue';
 import ViewerContent from 'components/ViewerContent.vue';
 import { useAutoLoadStore, useHeaderVisibilityStore } from 'src/stores/LocalStorage';
-import { readReadingPosition } from 'src/utils/readingPosition';
 
 export default defineComponent({
   props: {
@@ -75,16 +73,6 @@ export default defineComponent({
   },
   components: {
     ViewerContent,
-  },
-  setup(props) {
-    const route = useRoute();
-    // ?page が明示されていない場合は、前回読んだ位置から再開する
-    const viewerPage = computed(() => {
-      if (route.query.page !== undefined) return props.page;
-      const saved = readReadingPosition();
-      return saved != null ? String(saved) : props.page;
-    });
-    return { viewerPage };
   },
   computed: {
     headerVisible() {
