@@ -1,41 +1,41 @@
-# momoco (momoco)
+# momoco (みちくさびゅあー)
 
-momoco
+桃鳥さんの4コマ漫画「ばっくやーど数コマ」をスマホで読みやすくする Vue 3 + Quasar の SPA です。
 
 ## Install the dependencies
 
 ```bash
-yarn
-# or
-npm install
+pnpm install
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
 ```bash
-quasar dev
+pnpm dev
 ```
 
 ### Lint the files
 
 ```bash
-yarn lint
-# or
-npm run lint
+pnpm lint
 ```
 
 ### Format the files
 
 ```bash
-yarn format
-# or
-npm run format
+pnpm format
+```
+
+### Run the tests
+
+```bash
+pnpm test
 ```
 
 ### Build the app for production
 
 ```bash
-quasar build
+pnpm build
 ```
 
 ### Customize the configuration

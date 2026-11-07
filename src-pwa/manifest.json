@@ -1,4 +1,8 @@
 {
+  "name": "みちくさびゅあー",
+  "short_name": "みちくさびゅあー",
+  "description": "桃鳥さんの4コマ漫画「ばっくやーど数コマ」をスマホで読みやすくするアプリ",
+  "start_url": "/",
   "orientation": "",
   "display": "fullscreen",
   "background_color": "#ffffff",
