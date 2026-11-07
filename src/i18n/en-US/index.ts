@@ -4,5 +4,6 @@
 export default {
   failed: 'Action failed',
   success: 'Action was successful',
-  settings: 'Settings'
+  settings: 'Settings',
+  'みちくさでんわ': 'Michikusa Denwa',
 };

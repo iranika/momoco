@@ -15,4 +15,5 @@ export default {
   collapse: '閉じる',
   settings: '設定',
   search: '検索くん',
+  'みちくさでんわ': 'みちくさでんわ',
 };
