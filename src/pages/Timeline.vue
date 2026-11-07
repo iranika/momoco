@@ -29,7 +29,19 @@
             </div>
           </q-timeline-entry>
         </template>
-        <q-timeline-entry v-if="productStore.products.length != 0">
+        <q-timeline-entry v-if="productStore.status === 'error'">
+          <template v-slot:title>
+            <div class="text-subtitle1 text-bold">作品DBの読み込みに失敗しました</div>
+          </template>
+          <template v-slot:subtitle>
+            {{ date.formatDate(Date(), 'YYYY/MM/DD') }}
+          </template>
+          <div>
+            <div style="margin-bottom: 8px">{{ productStore.errorMessage }}</div>
+            <q-btn color="primary" label="再読み込み" @click="productStore.fetch()" />
+          </div>
+        </q-timeline-entry>
+        <q-timeline-entry v-else-if="productStore.products.length != 0">
           <template v-slot:title>
             <div class="text-subtitle1 text-bold">Now waiting -> next...</div>
           </template>
