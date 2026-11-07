@@ -13,6 +13,7 @@
       :rows="searchStore.products"
       :columns="columns"
       row-key="No"
+      :loading="searchStore.status === 'loading'"
       :selected-rows-label="getSelectedString"
       selection="multiple"
       v-model:selected="selected"

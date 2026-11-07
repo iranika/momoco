@@ -1,12 +1,17 @@
 <template>
-  <div class="viewer-content">
+  <div ref="rootEl" class="viewer-content">
     <div v-if="hasPrevious" class="feed-nav">
       <q-btn size="x-small" color="white" class="text-black" rounded @click="prependPrevious">
         ▲前のお話▲
       </q-btn>
     </div>
 
-    <article v-for="{ index: i, page } in visiblePages" :key="i" class="episode">
+    <article
+      v-for="{ index: i, page } in visiblePages"
+      :key="i"
+      class="episode"
+      :data-episode-index="page.Index"
+    >
       <div
         v-for="(url, j) in page.ImagesUrl"
         :key="j"
@@ -115,7 +120,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, toRef } from 'vue';
+import { defineComponent, nextTick, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
 import TwitterShareButton from 'components/TwitterShareButton.vue';
 import { useMemoStore } from 'src/stores/MemoStore';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
@@ -125,6 +130,7 @@ import {
   readStoredKomaAspect,
   writeStoredKomaAspect,
 } from 'src/utils/komaAspect';
+import { advanceReadingPosition } from 'src/utils/readingPosition';
 
 export default defineComponent({
   components: {
@@ -153,6 +159,46 @@ export default defineComponent({
     const pageQuery = toRef(props, 'page');
 
     const feed = useComicFeed(pages, pageQuery, komaAspect, sentinelEl);
+    const rootEl = ref<HTMLElement | null>(null);
+    let scrollTick = false;
+
+    // 画面に実際に到達した話の Index を保存し、次回ホームを開いたときに再開できるようにする。
+    // lastIndex(先読み込みの末尾)ではなく DOM 上の表示位置から求める。
+    function saveReadingPosition() {
+      const root = rootEl.value;
+      if (!root) return;
+      const viewportBottom = window.innerHeight;
+      let furthest: number | null = null;
+      const articles = root.querySelectorAll<HTMLElement>('article.episode');
+      for (const el of articles) {
+        if (el.getBoundingClientRect().top >= viewportBottom) break;
+        const index = Number(el.dataset.episodeIndex);
+        if (Number.isInteger(index) && index > 0 && (furthest == null || index > furthest)) {
+          furthest = index;
+        }
+      }
+      if (furthest != null) advanceReadingPosition(furthest);
+    }
+
+    function scheduleSave() {
+      if (scrollTick) return;
+      scrollTick = true;
+      requestAnimationFrame(() => {
+        scrollTick = false;
+        saveReadingPosition();
+      });
+    }
+
+    watch(feed.visiblePages, scheduleSave, { flush: 'post' });
+
+    onMounted(() => {
+      window.addEventListener('scroll', scheduleSave, { passive: true });
+      void nextTick(() => saveReadingPosition());
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener('scroll', scheduleSave);
+    });
 
     function komaFrameStyle(url: string) {
       const ar = komaAspect.value[url];
@@ -185,6 +231,7 @@ export default defineComponent({
       memo,
       memoStore,
       sentinelEl,
+      rootEl,
       startIndex: feed.startIndex,
       visiblePages: feed.visiblePages,
       hasPrevious: feed.hasPrevious,
