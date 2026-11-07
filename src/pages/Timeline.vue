@@ -16,6 +16,7 @@
               :src="product.img"
               width="500"
               height="237"
+              loading="lazy"
               style="
                 display: block;
                 width: 100%;

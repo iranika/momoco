@@ -102,28 +102,29 @@
       :width="240"
       behavior="mobile"
     >
-      <q-scroll-area class="fit">
+      <div class="fit column">
         <q-list>
           <q-item style="margin-top: 10px" clickable to="/search">
             <q-item-section>詳細検索をひらく</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>
-              <q-input dense label="検索" v-model="searchText"></q-input>
+              <q-input dense label="検索" v-model="searchText" debounce="300"></q-input>
             </q-item-section>
           </q-item>
-          <q-item
-            clickable
-            class="text-black"
-            v-for="(_, i) in pageData"
-            :key="i"
-            :to="getPageUrl(pageData[i]?.Index ?? '')"
-            v-show="isFiltered(pageData[i]?.Title ?? '', i)"
-          >
-            <q-item-section>{{ pageData[i]?.Index }}.{{ pageData[i]?.Title }}</q-item-section>
-          </q-item>
         </q-list>
-      </q-scroll-area>
+        <q-virtual-scroll
+          class="col"
+          style="min-height: 0"
+          :items="filteredPages"
+          v-slot="{ item }"
+          :virtual-scroll-item-size="36"
+        >
+          <q-item clickable class="text-black" :to="getPageUrl(item.display)">
+            <q-item-section>{{ item.display }}.{{ item.title }}</q-item-section>
+          </q-item>
+        </q-virtual-scroll>
+      </div>
       <!-- drawer content -->
     </q-drawer>
 
@@ -282,10 +283,16 @@ export default defineComponent({
       return `/?page=${index.toString()}`;
     }
 
-    function isFiltered(title: string, index: number) {
-      const num = index + 1;
-      return `${num}.${title}`.toString().includes(searchText.value);
-    }
+    // 検索ドロワー用。キーストロークごとの全件走査を避けるため computed でメモ化する
+    const filteredPages = computed(() =>
+      pageData
+        .map((page, i) => ({
+          pos: i + 1,
+          display: page?.Index ?? '',
+          title: page?.Title ?? '',
+        }))
+        .filter((p) => `${p.pos}.${p.title}`.includes(searchText.value)),
+    );
 
     const headerVisibilityStore = useHeaderVisibilityStore();
     const headerImgStore = useHeaderImgStore();
@@ -336,7 +343,7 @@ export default defineComponent({
       },
       pageData,
       searchText,
-      isFiltered,
+      filteredPages,
       bookmarkStore,
       openURL,
       backimg: computed(() => {
