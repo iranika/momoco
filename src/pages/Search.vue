@@ -1,5 +1,11 @@
 <template>
   <q-page padding>
+    <q-banner v-if="searchStore.status === 'error'" class="bg-negative text-white" rounded>
+      検索DBの読み込みに失敗しました: {{ searchStore.errorMessage }}
+      <template v-slot:action>
+        <q-btn flat label="再読み込み" @click="searchStore.fetch()" />
+      </template>
+    </q-banner>
     <q-table
       title="びゅあー検索㌼"
       :dense="$q.screen.lt.md"

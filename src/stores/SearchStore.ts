@@ -6,9 +6,13 @@ https://docs.google.com/spreadsheets/d/1naQXZKxTK0NyHuJK0juqCurruwj3tMqgO5dGUM2L
 import axios from 'axios';
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { Notify } from 'quasar';
 
 const ProductDBurl =
   'https://script.google.com/macros/s/AKfycbyqELM2mm3J58BLXIjxKxIYN64x6iF6I6ctJU_Vdui6gx331Pz5R5FpuL3s-aM8nsgn/exec';
+
+// GASのコールドスタートを考慮して長めに取る
+const REQUEST_TIMEOUT_MS = 20000;
 
 export interface SearchInfo {
   Characters: string[];
@@ -21,7 +25,7 @@ export interface SearchDB extends SearchInfo {
   Title: string;
 }
 
-const toStringArray = (value: unknown): string[] => {
+export const toStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value
       .filter((item): item is string => typeof item === 'string')
@@ -37,7 +41,7 @@ const toStringArray = (value: unknown): string[] => {
   return [];
 };
 
-const normalizeSearchInfo = (value: unknown): SearchInfo => {
+export const normalizeSearchInfo = (value: unknown): SearchInfo => {
   const fallback: SearchInfo = {
     Characters: [],
     Keyword: [],
@@ -48,45 +52,79 @@ const normalizeSearchInfo = (value: unknown): SearchInfo => {
     return fallback;
   }
 
-  const raw = value as Partial<SearchInfo>;
+  const raw = value as {
+    Characters?: unknown;
+    // スプレッドシート側の見出しが Charactors(綴り違い)のため両方を受け付ける
+    Charactors?: unknown;
+    Keyword?: unknown;
+    Comment?: unknown;
+  };
   return {
-    Characters: toStringArray(raw.Characters),
+    Characters: toStringArray(raw.Characters ?? raw.Charactors),
     Keyword: toStringArray(raw.Keyword),
     Comment: typeof raw.Comment === 'string' ? raw.Comment : fallback.Comment,
   };
 };
 
+/*
+GASのレスポンスは [{ "<話数index>": { Characters, Keyword, Comment } }, ...] の形式。
+行の並び順ではなくオブジェクトのキー(話数index)を使って対応付けることで、
+スプレッドシートで行の挿入・並べ替えがあっても別の話の情報が紐づかないようにする。
+*/
+export const toSearchInfoMap = (rows: unknown): Map<number, SearchInfo> => {
+  const map = new Map<number, SearchInfo>();
+  if (!Array.isArray(rows)) {
+    return map;
+  }
+  rows.forEach((row, index) => {
+    if (row == null || typeof row !== 'object') {
+      return;
+    }
+    const entries = Object.entries(row as Record<string, unknown>);
+    const first = entries[0];
+    if (!first) {
+      return;
+    }
+    const [key, value] = first;
+    const episodeIndex = key !== '' ? Number(key) : index;
+    if (!Number.isInteger(episodeIndex)) {
+      return;
+    }
+    map.set(episodeIndex, normalizeSearchInfo(value));
+  });
+  return map;
+};
+
 export const useSearchStore = defineStore('search', () => {
   const products = ref<SearchDB[]>([]);
-  let extDB: (SearchInfo | undefined)[] = [];
+  const status = ref<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const errorMessage = ref('');
 
   async function fetch() {
+    status.value = 'loading';
+    errorMessage.value = '';
     try {
-      const res = await axios.get<Array<Record<number, SearchInfo>>>(ProductDBurl);
-      const db = res.data;
-      extDB = db.map((v, i): SearchInfo | undefined => {
-        return i in v ? v[i] : undefined;
+      const res = await axios.get<unknown>(ProductDBurl, {
+        timeout: REQUEST_TIMEOUT_MS,
       });
-      products.value = window.pageData.map((v, i) => {
-        if (extDB[i]) {
-          return Object.assign({ Title: v.Title, No: i + 1 }, normalizeSearchInfo(extDB[i]));
-        } else {
-          return Object.assign(
-            { Title: v.Title, No: i + 1 },
-            {
-              No: i + 1,
-              Title: 'Non title',
-            },
-            normalizeSearchInfo(undefined),
-          );
-        }
+      const infoMap = toSearchInfoMap(res.data);
+      const pages = window.pageData ?? [];
+      products.value = pages.map((page, i) => {
+        const info = infoMap.get(i) ?? normalizeSearchInfo(undefined);
+        return { No: i + 1, Title: page.Title, ...info };
       });
-    } catch {
-      // 検索DBの取得に失敗してもストアが空のままになるだけなので握りつぶす
+      status.value = 'success';
+    } catch (e) {
+      status.value = 'error';
+      errorMessage.value = e instanceof Error ? e.message : String(e);
+      Notify.create({
+        type: 'negative',
+        message: '検索DBの取得に失敗しました。時間をおいて再読み込みしてください。',
+      });
     }
   }
 
   void fetch();
 
-  return { products, fetch };
+  return { products, status, errorMessage, fetch };
 });
