@@ -9,6 +9,7 @@
         :icon="headerVisible ? 'fullscreen' : 'fullscreen_exit'"
         color="white"
         class="text-black"
+        :aria-label="headerVisible ? 'ヘッダを非表示' : 'ヘッダを表示'"
       >
         <q-tooltip>
           {{ headerVisible ? 'ヘッダを非表示' : 'ヘッダを表示' }}
@@ -24,6 +25,7 @@
         color="white"
         class="text-black"
         :aria-pressed="autoLoad"
+        :aria-label="autoLoad ? '自動で続きを読む（ON）' : '手動で続きを表示（OFF）'"
       >
         <q-tooltip>
           {{ autoLoad ? '自動で続きを読む（ON）' : '手動で続きを表示（OFF）' }}
@@ -38,6 +40,7 @@
         icon="keyboard_arrow_up"
         color="white"
         class="text-black"
+        aria-label="先頭に戻る"
       />
     </q-page-sticky>
     <!-- content -->
@@ -87,7 +90,7 @@ export default defineComponent({
       useAutoLoadStore().toggle();
     },
     scrollTop() {
-      scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
   },
 });

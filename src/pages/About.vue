@@ -31,8 +31,8 @@
             <li>
               URLで指定話数にジャンプできます。数字の代わりにlatestと記載すると最新話にジャンプできます。こいつのおかげで、好きな話数をシェアできる！！
             </li>
-            https://movue.iranika.info/#/?page=100<br />
-            https://movue.iranika.info/#/?page=latest<br />
+            https://mo4koma.iranika.info/#/?page=100<br />
+            https://mo4koma.iranika.info/#/?page=latest<br />
             <li>PWAに対応しているのでアプリのようにインストールできます。</li>
           </ol>
           <div>
