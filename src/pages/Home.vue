@@ -1,14 +1,16 @@
 <template>
   <q-page padding class="bg">
     <ViewerContent :page="page" />
-    <q-page-sticky position="bottom-right" :offset="[18, 110]">
+    <q-page-sticky position="bottom-right" :offset="[18, 140]">
       <q-btn
         size="small"
-        round
+        stack
         @click="toggleHeader()"
         :icon="headerVisible ? 'fullscreen' : 'fullscreen_exit'"
+        label="ヘッダー"
         color="white"
         class="text-black"
+        :aria-pressed="headerVisible"
         :aria-label="headerVisible ? 'ヘッダを非表示' : 'ヘッダを表示'"
       >
         <q-tooltip>
@@ -16,12 +18,13 @@
         </q-tooltip>
       </q-btn>
     </q-page-sticky>
-    <q-page-sticky position="bottom-right" :offset="[18, 64]">
+    <q-page-sticky position="bottom-right" :offset="[18, 80]">
       <q-btn
         size="small"
-        round
+        stack
         @click="toggleAutoLoad()"
         :icon="autoLoad ? 'autorenew' : 'pause'"
+        label="自動"
         color="white"
         class="text-black"
         :aria-pressed="autoLoad"
@@ -35,9 +38,10 @@
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
         size="small"
-        round
+        stack
         @click="scrollTop()"
         icon="keyboard_arrow_up"
+        label="先頭"
         color="white"
         class="text-black"
         aria-label="先頭に戻る"
