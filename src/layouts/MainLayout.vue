@@ -158,7 +158,7 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppFooter from 'components/Footer.vue';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
@@ -284,10 +284,15 @@ export default defineComponent({
     const bookmarkStore = useBookmarkStore();
     const router = useRouter();
 
-    // ページ遷移後はドロワーを閉じ、モバイルで画面を覆い続けないようにする
-    router.afterEach(() => {
+    // ページ遷移後はドロワーを閉じ、モバイルで画面を覆い続けないようにする。
+    // Error404(レイアウト外)との往復でレイアウトが再生成されてもフックが蓄積しないよう、
+    // 破棄時に解除する
+    const removeAfterEach = router.afterEach(() => {
       leftDrawerOpen.value = false;
       rightDrawerOpen.value = false;
+    });
+    onUnmounted(() => {
+      removeAfterEach();
     });
 
     function getPageUrl(index: number | string) {
