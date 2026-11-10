@@ -74,6 +74,7 @@
         ▼続きを表示▼
       </q-btn>
     </div>
+    <p v-if="!hasMore && visiblePages.length" class="latest-notice">これが最新話です</p>
   </div>
 </template>
 
@@ -97,6 +98,12 @@
   width: 100%;
   height: 1px;
   pointer-events: none;
+}
+
+.latest-notice {
+  text-align: center;
+  padding: 16px 10px;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .koma-frame {

@@ -45,42 +45,8 @@
 
     <!-- Left Drawer -->
     <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered behavior="mobile">
-      <q-scroll-area class="fit">
-        <q-list padding>
-          <q-item-label header caption>みちくさびゅあー</q-item-label>
-          <template v-for="list in linksList" :key="list">
-            <q-item clickable v-ripple :to="list.link" :disable="list.disable" exact>
-              <q-item-section avatar>
-                <q-icon :name="list.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ list.disable ? $t(list.title) + ' : WIP' : $t(list.title) }}
-              </q-item-section>
-            </q-item>
-          </template>
-          <q-item-label header caption>みちくさやのあぷり</q-item-label>
-          <template v-for="list in nikaLinkList" :key="list">
-            <q-item clickable @click="openURL(list.link)" :disable="list.disable">
-              <q-item-section avatar>
-                <q-icon :name="list.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ list.disable ? $t(list.title) + ' : WIP' : list.title }}
-              </q-item-section>
-            </q-item>
-          </template>
-          <q-item-label header caption>外部リンク</q-item-label>
-          <template v-for="list in extLinkList" :key="list">
-            <q-item clickable @click="openURL(list.link)" :disable="list.disable">
-              <q-item-section avatar>
-                <q-icon :name="list.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ list.disable ? $t(list.title) + ' : WIP' : list.title }}
-              </q-item-section>
-            </q-item>
-          </template>
-          <q-separator></q-separator>
+      <div class="fit column">
+        <q-list>
           <q-item clickable v-ripple @click="toggleLeftDrawer">
             <q-item-section avatar>
               <q-icon name="chevron_left" />
@@ -90,7 +56,44 @@
             </q-item-section>
           </q-item>
         </q-list>
-      </q-scroll-area>
+        <q-scroll-area class="col" style="min-height: 0">
+          <q-list padding>
+            <q-item-label header caption>みちくさびゅあー</q-item-label>
+            <template v-for="list in linksList" :key="list">
+              <q-item clickable v-ripple :to="list.link" :disable="list.disable" exact>
+                <q-item-section avatar>
+                  <q-icon :name="list.icon" />
+                </q-item-section>
+                <q-item-section>
+                  {{ list.disable ? $t(list.title) + ' : WIP' : $t(list.title) }}
+                </q-item-section>
+              </q-item>
+            </template>
+            <q-item-label header caption>みちくさやのあぷり</q-item-label>
+            <template v-for="list in nikaLinkList" :key="list">
+              <q-item clickable @click="openURL(list.link)" :disable="list.disable">
+                <q-item-section avatar>
+                  <q-icon :name="list.icon" />
+                </q-item-section>
+                <q-item-section>
+                  {{ list.disable ? $t(list.title) + ' : WIP' : list.title }}
+                </q-item-section>
+              </q-item>
+            </template>
+            <q-item-label header caption>外部リンク</q-item-label>
+            <template v-for="list in extLinkList" :key="list">
+              <q-item clickable @click="openURL(list.link)" :disable="list.disable">
+                <q-item-section avatar>
+                  <q-icon :name="list.icon" />
+                </q-item-section>
+                <q-item-section>
+                  {{ list.disable ? $t(list.title) + ' : WIP' : list.title }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-list>
+        </q-scroll-area>
+      </div>
     </q-drawer>
 
     <!-- right drawer -->
@@ -156,6 +159,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppFooter from 'components/Footer.vue';
 import { useBookmarkStore } from 'src/stores/LocalStorage';
 import { openURL } from 'quasar';
@@ -278,6 +282,13 @@ export default defineComponent({
     const searchText = ref('');
     const pageData = window.pageData;
     const bookmarkStore = useBookmarkStore();
+    const router = useRouter();
+
+    // ページ遷移後はドロワーを閉じ、モバイルで画面を覆い続けないようにする
+    router.afterEach(() => {
+      leftDrawerOpen.value = false;
+      rightDrawerOpen.value = false;
+    });
 
     function getPageUrl(index: number | string) {
       return `/?page=${index.toString()}`;
@@ -336,10 +347,14 @@ export default defineComponent({
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
+        // 片方を開いたらもう片方を閉じる
+        if (leftDrawerOpen.value) rightDrawerOpen.value = false;
       },
       rightDrawerOpen,
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
+        // 片方を開いたらもう片方を閉じる
+        if (rightDrawerOpen.value) leftDrawerOpen.value = false;
       },
       pageData,
       searchText,
